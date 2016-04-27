@@ -261,7 +261,55 @@ void Quick_Sort(int* array, int left, int right, bool ascendind = true)
 #pragma endregion Quick_Sort
 
 
-#define LENGTH  1000000
+
+//ШЅжи 
+#pragma region Unique
+//Remove the repeat items
+//Input Array Must Be Sorted
+
+std::tuple<int*, size_t> Unique(int* array, size_t len)
+{
+
+	auto result = new int[len];
+
+	memset(result, 0, len);
+
+	int k = 0;
+
+	result[0] = array[0];
+
+	for (size_t i = 1; i < len; i++)
+	{
+		if (array[i] != array[i - 1])
+		{
+			k++;
+			result[k] = array[i];
+		}
+	}
+
+	auto res = new int[k + 1];
+
+	for (size_t i = 0; i <= k; i++)
+	{
+		res[i] = result[i];
+	}
+
+	delete[] result;
+
+	return make_tuple(res, k + 1);
+
+}
+
+#pragma endregion Unique
+
+
+#define LENGTH  100
+
+
+void show(int a[])
+{
+	OUT(LEN(a));
+}
 
 
 int main()
@@ -270,19 +318,8 @@ int main()
 	auto ptr_array = GetRandomArray<int>(LENGTH, 0, LENGTH);
 
 
-	//OutArray(ptr_array, LENGTH);
+	OutArray(Selection_Sort(ptr_array, LENGTH), LENGTH);
 
-	Stopwatch sw;
-	sw.Start();
-
-	Quick_Sort(ptr_array, 0, LENGTH - 1);
-
-	auto time = sw.Stop();
-
-
-	//OutArray(ptr_array, LENGTH);
-
-	OUT("Time: " << time);
 
 	system("Pause");
 

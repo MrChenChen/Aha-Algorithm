@@ -6,6 +6,7 @@
 #include <tchar.h>
 
 #include <vector>
+#include <list>
 #include <iostream>
 
 #include "Stopwatch.h"
@@ -13,7 +14,7 @@
 #include <windows.h>
 
 #include <random>
-
+#include <tuple>
 
 #define  OUT(x)  cout << x << endl
 
