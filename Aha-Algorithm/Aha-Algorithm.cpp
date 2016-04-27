@@ -3,11 +3,21 @@
 using namespace std;
 
 
+static map<char, int> map_char_int = {
+	{ '1', 1 },
+	{ '2', 2 },
+	{ '3', 3 },
+	{ '4', 4 },
+	{ '5', 5 },
+	{ '6', 6 },
+	{ '7', 7 },
+	{ '8', 8 },
+	{ '9', 9 },
+};
 
-//获取随机数
+
 #pragma region Random
-
-
+//获取随机数
 //type = 1  int;
 //type = -1 double;
 
@@ -62,8 +72,8 @@ T* GetRandomArray(size_t len, T _min, T _max)
 
 
 
+#pragma region Bucket_Sort 
 //桶排序   O(m+n)
-#pragma region Bucket_Sort  
 //Max value is related to your Memory and Platform!!! 
 //This Must Be Unsigned Integer Array
 
@@ -145,8 +155,9 @@ int* Bucket_Sort(int *temp, const size_t len, bool ascending = true)
 
 
 
-//冒泡排序  O(pow(N,2))
 #pragma region Bubble_Sort
+//冒泡排序  O(pow(N,2))
+
 //This Can be Signed Integer Array or Double Array
 
 //0-10       About 0.0028    ms
@@ -188,8 +199,8 @@ int* Bubble_Sort(int *temp, const size_t len, bool ascending = true)
 
 
 
-//快排     O(NlogN)
 #pragma region Quick_Sort
+//快排     O(NlogN)
 //This Can be Signed Integer Array or Double Array
 
 //0-10       About  0.0015   ms
@@ -261,28 +272,68 @@ void Quick_Sort(int* array, int left, int right, bool ascendind = true)
 #pragma endregion Quick_Sort
 
 
+
+#pragma region Match Number
+
+
+size_t GetMatchNumberCount(size_t num)
+{
+	int f[10] = { 6,2,5,5,4,5,6,3,7,6 };
+
+	char str[100];
+
+	sprintf_s(str, "%d", num);
+
+
+
+	size_t t = 0;
+
+	int k = 0;
+
+	while (str[k] != '\0')
+	{
+
+		t += f[map_char_int[str[k]]];
+		k++;
+	}
+
+	return t;
+
+}
+
+
+#pragma endregion Match Number
+
+
+
+#pragma region Full Array
+//全排列
+
+
+
+#pragma endregion Full Array
+
+
 #define LENGTH  1000000
+
+
+
+
 
 
 int main()
 {
+	MyList<int> l;
 
-	auto ptr_array = GetRandomArray<int>(LENGTH, 0, LENGTH);
+	l.Add(10);
+	l.Add(20);
+	l.Add(30);
+	l.Add(40);
 
-
-	//OutArray(ptr_array, LENGTH);
-
-	Stopwatch sw;
-	sw.Start();
-
-	Quick_Sort(ptr_array, 0, LENGTH - 1);
-
-	auto time = sw.Stop();
+	l.RemoveAt(2);
 
 
-	//OutArray(ptr_array, LENGTH);
-
-	OUT("Time: " << time);
+	
 
 	system("Pause");
 

@@ -13,7 +13,7 @@
 #include <windows.h>
 
 #include <random>
-
+#include <map>
 
 #define  OUT(x)  cout << x << endl
 
@@ -21,3 +21,5 @@
 #define  LEN(x)  (sizeof(x)/sizeof(x[0]))
 
 #define OutArray(x,loop)  for (size_t i = 0; i < loop; i++) cout<<(x[i])<<"  "; cout<<endl;
+
+

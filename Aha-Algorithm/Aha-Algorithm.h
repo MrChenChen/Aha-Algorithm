@@ -1,70 +1,133 @@
 #pragma once
 
+//list  should sava last and next both point
 
+template<typename T>
 class MyList
 {
 
 	struct MyStruct
 	{
-		int data;
+		T data;
 
-		MyStruct *ptr = nullptr;
+		MyStruct *next = nullptr;
+
+		MyStruct *previous = nullptr;
 
 	};
 
+
+
 public:
 
-	MyList()
+
+	void Add(T _i)
 	{
-
-	}
-
-	~MyList()
-	{
-
-	}
-
-	void Add(int _i)
-	{
-		if (m_start == nullptr && m_end == nullptr)
+		if (m_mark == nullptr)
 		{
-			auto t = static_cast<MyStruct*>(malloc(sizeof(MyStruct)));
+			m_mark = new MyStruct;
 
-			t->data = _i;
+			auto temp = new MyStruct;
 
-			m_start = t;
+			temp->data = _i;
 
-			m_end = t;
+			m_mark->next = temp;
+
+			m_mark->previous = temp;
+
+
+			m_size++;
+		}
+		else if (m_size > 0)
+		{
+
+			auto temp = new MyStruct;
+
+			temp->data = _i;
+
+			m_mark->next->next = temp;
+
+			temp->previous = m_mark->next;
+
+			m_mark->next = temp;
+
+			m_size++;
 
 		}
-		if (m_start != nullptr && m_end != nullptr)
+
+	}
+
+
+	T operator[](unsigned n)
+	{
+		auto s = m_mark->previous;
+
+		for (size_t i = 0; i < n; i++)
 		{
-			auto t = static_cast<MyStruct*>(malloc(sizeof(MyStruct)));
-
-			t->data = _i;
-
-			m_end->ptr = t;
-
-			m_end = t;
+			s = s->next;
 		}
 
+		return s->data;
 	}
 
-	MyStruct* Start()
+
+	void RemoveAt(size_t n)
 	{
-		return m_start;
+		auto s = GetItemAt(n);
+
+		if (s->previous != nullptr && s->next != nullptr)
+		{
+			s->previous->next = s->next;
+
+			s->next->previous = s->previous;
+
+		}
+		else if (s->previous == nullptr && s->next != nullptr)
+		{
+			m_mark->previous = s->next;
+
+			s->next->previous = nullptr;
+		}
+		else if (s->next == nullptr && s->previous != nullptr)
+		{
+			m_mark->next = s->previous;
+
+			s->previous->next = nullptr;
+		}
+
+		m_size--;
+
+		delete s;
 	}
 
-	MyStruct* end()
+
+	MyStruct* GetItemAt(size_t n)
 	{
-		return m_end;
+		if (n >= m_size)
+		{
+			throw out_of_range("List GetItemAt Out Of Range");
+		}
+
+		auto s = m_mark->previous;
+
+		for (size_t i = 0; i < n; i++)
+		{
+			s = s->next;
+		}
+
+		return s;
 	}
 
+
+	size_t size()
+	{
+		return m_size;
+	}
 
 private:
 
-	MyStruct *m_start = nullptr;
+	MyStruct *m_mark = nullptr;
 
-	MyStruct *m_end = nullptr;
+	size_t m_size = 0;
 
 };
