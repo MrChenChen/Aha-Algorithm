@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Aha-Algorithm.h"
+#include <list>
+
 using namespace std;
 
 
@@ -14,6 +16,11 @@ static map<char, int> map_char_int = {
 	{ '8', 8 },
 	{ '9', 9 },
 };
+
+static size_t GetNumberLen(long long num)
+{
+	return int(log(num) / log(10)) + 1;
+}
 
 
 #pragma region Random
@@ -309,12 +316,93 @@ size_t GetMatchNumberCount(size_t num)
 #pragma region Full Array
 //È«ÅÅÁÐ
 
+bool HasAllNum(unsigned int n)
+{
+	int len = GetNumberLen(n);
+
+
+	auto base = new int[len];
+
+	for (size_t i = 0; i < n; i++)
+	{
+		base[i] = i + 1;
+	}
+
+	int temp = n;
+
+	for (size_t i = 0; i < len; i++)
+	{
+		auto t = n % (int)pow(10, i);
+
+		temp /= 10;
+	}
+
+	return 0;
+}
+
+long Get_1_N_Max(int n)
+{
+	auto base = new int[n];
+
+	for (size_t i = 0; i < n; i++)
+	{
+		base[i] = i + 1;
+	}
+
+	long max = 0;
+
+	for (size_t i = n - 1; i > 0; i--)
+	{
+		max += base[i] * pow(10, i);
+	}
+
+	return max + 1;
+}
+
+
+long Get_1_N_Min(int n)
+{
+	auto base = new int[n];
+
+	for (size_t i = 0; i < n; i++)
+	{
+		base[i] = i + 1;
+	}
+
+	long min = 0;
+
+	for (size_t i = 0; i < n; i++)
+	{
+		min += base[i] * pow(10, n - i - 1);
+	}
+
+	return min;
+}
+
+
+void Show(int n)
+{
+	auto base = new int[n];
+
+	for (size_t i = 1; i <= n; i++)
+	{
+		base[i] = n;
+	}
+
+	long min = Get_1_N_Min(n);
+	long max = Get_1_N_Max(n);
+
+
+	for (long i = min; i <= max; i++)
+	{
+
+	}
+
+
+}
 
 
 #pragma endregion Full Array
-
-
-#define LENGTH  1000000
 
 
 
@@ -323,17 +411,17 @@ size_t GetMatchNumberCount(size_t num)
 
 int main()
 {
-	MyList<int> l;
+	long a = 12345678;
 
-	l.Add(10);
-	l.Add(20);
-	l.Add(30);
-	l.Add(40);
+	for (size_t i = 0; i < 8; i++)
+	{
+		auto t = a % ((int)pow(10, i + 1));
 
-	l.RemoveAt(2);
+		a /= 10;
 
+		OUT(t);
+	}
 
-	
 
 	system("Pause");
 

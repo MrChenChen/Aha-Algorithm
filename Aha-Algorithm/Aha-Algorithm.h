@@ -1,11 +1,9 @@
 #pragma once
 
-//list  should sava last and next both point
 
 template<typename T>
 class MyList
 {
-
 	struct MyStruct
 	{
 		T data;
@@ -16,10 +14,33 @@ class MyList
 
 	};
 
-
-
 public:
 
+	MyList() = default;
+
+	MyList(std::initializer_list<T> _Ilist)
+	{
+
+	}
+
+	~MyList()
+	{
+		if (m_mark)
+		{
+			auto s = m_mark->previous;
+
+			while (s != nullptr)
+			{
+				auto _next = s->next;
+
+				delete s;
+
+				s = _next;
+			}
+		}
+
+		if (m_mark) delete m_mark;
+	}
 
 	void Add(T _i)
 	{
@@ -123,6 +144,7 @@ public:
 	{
 		return m_size;
 	}
+
 
 private:
 
