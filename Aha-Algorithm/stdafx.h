@@ -15,6 +15,8 @@
 #include <random>
 #include <map>
 
+#include <windows.h>
+
 #define  OUT(x)  cout << x << endl
 
 //Must Not Use In NEW ARRAY!!!

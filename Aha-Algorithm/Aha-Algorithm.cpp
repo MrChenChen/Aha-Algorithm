@@ -5,6 +5,26 @@
 using namespace std;
 
 
+#ifdef UNICODE
+#define _T(x) L ## x
+#define STRING LPCWSTR
+#else
+#define _T(x) x
+#define STRING LPCTSTR
+#endif
+
+
+bool RequireAdmin(STRING path)
+{
+	SHELLEXECUTEINFO info = { sizeof(SHELLEXECUTEINFO) };
+	info.nShow = SW_NORMAL;
+	info.lpFile = path;
+	info.lpVerb = _T("runas");
+
+	return ShellExecuteEx(&info);
+}
+
+
 static map<char, int> map_char_int = {
 	{ '1', 1 },
 	{ '2', 2 },
@@ -16,6 +36,7 @@ static map<char, int> map_char_int = {
 	{ '8', 8 },
 	{ '9', 9 },
 };
+
 
 static size_t GetNumberLen(long long num)
 {
@@ -427,26 +448,13 @@ void Show(int n)
 
 
 
-#ifdef UNICODE
-#define _T(x) L ## x
-#else
-#define _T(x) x
-#endif
+
 
 
 
 int main()
 {
-	MessageBox(0, _T("Title"), _T("Hi~~~~"), 0);
-
-	Stopwatch sw;
-	sw.Start();
-
-	Show(6);
-
-	OUT("Time: " << sw.Stop());
-
-	//OUT(HasAllNum(12345));
+	RequireAdmin(_T("D:\\³£ÓÃÈí¼þ\\SPY.exe"));
 
 	system("Pause");
 
