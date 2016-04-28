@@ -314,31 +314,52 @@ size_t GetMatchNumberCount(size_t num)
 
 
 #pragma region Full Array
-//х╚ееап
+
 
 bool HasAllNum(unsigned int n)
 {
 	int len = GetNumberLen(n);
 
-
 	auto base = new int[len];
 
-	for (size_t i = 0; i < n; i++)
+	for (size_t i = 0; i < len; i++)
 	{
-		base[i] = i + 1;
+		base[i] = 0;
 	}
 
 	int temp = n;
 
 	for (size_t i = 0; i < len; i++)
 	{
-		auto t = n % (int)pow(10, i);
+		auto t = temp % 10;
+
+		if (t - 1 >= len || t - 1 < 0)
+		{
+			delete[] base;
+
+			return false;
+		}
+
+		base[t - 1]++;
 
 		temp /= 10;
 	}
 
-	return 0;
+	for (size_t i = 0; i < len; i++)
+	{
+		if (base[i] != 1)
+		{
+			delete[] base;
+
+			return false;
+		}
+	}
+
+	delete[] base;
+
+	return true;
 }
+
 
 long Get_1_N_Max(int n)
 {
@@ -355,6 +376,8 @@ long Get_1_N_Max(int n)
 	{
 		max += base[i] * pow(10, i);
 	}
+
+	delete[] base;
 
 	return max + 1;
 }
@@ -376,26 +399,24 @@ long Get_1_N_Min(int n)
 		min += base[i] * pow(10, n - i - 1);
 	}
 
+	delete[] base;
+
 	return min;
 }
 
 
 void Show(int n)
 {
-	auto base = new int[n];
-
-	for (size_t i = 1; i <= n; i++)
-	{
-		base[i] = n;
-	}
 
 	long min = Get_1_N_Min(n);
 	long max = Get_1_N_Max(n);
 
-
 	for (long i = min; i <= max; i++)
 	{
-
+		if (HasAllNum(i))
+		{
+			OUT(i);
+		}
 	}
 
 
@@ -406,22 +427,26 @@ void Show(int n)
 
 
 
+#ifdef UNICODE
+#define _T(x) L ## x
+#else
+#define _T(x) x
+#endif
 
 
 
 int main()
 {
-	long a = 12345678;
+	MessageBox(0, _T("Title"), _T("Hi~~~~"), 0);
 
-	for (size_t i = 0; i < 8; i++)
-	{
-		auto t = a % ((int)pow(10, i + 1));
+	Stopwatch sw;
+	sw.Start();
 
-		a /= 10;
+	Show(6);
 
-		OUT(t);
-	}
+	OUT("Time: " << sw.Stop());
 
+	//OUT(HasAllNum(12345));
 
 	system("Pause");
 
