@@ -18,15 +18,54 @@ public:
 
 	MyList() = default;
 
+
 	MyList(std::initializer_list<T> _Ilist)
 	{
-		
+		Clear();
+
+		for each (const T & item in _Ilist)
+		{
+			Add(item);
+		}
 
 	}
 
-	MyList(const MyList && _list)
-	{
 
+	MyList(MyList<T> && _list)
+		:m_mark(_list.m_mark), m_size(_list.m_size)
+	{
+		_list.m_size = 0;
+		_list = _list.m_mark->previous = _list.m_mark->next = nullptr;
+	}
+
+
+	MyList<T> & operator=(MyList<T> && _list) noexcept
+	{
+		if (&_list != this)
+		{
+			Clear();
+
+			m_mark = _list.m_mark;
+
+			m_size = _list.m_size;
+
+
+			_list.m_mark = nullptr;
+
+		}
+
+		return *this;
+	}
+
+
+	MyList<T> & operator=(const MyList<T> & _list)
+	{
+		Clear();
+
+		for each (T item in _list)
+		{
+			Add(item);
+		}
 	}
 
 
@@ -35,7 +74,8 @@ public:
 		Clear();
 	}
 
-	void Add(T _i)
+
+	void Add(const T & _i)
 	{
 		if (m_mark == nullptr)
 		{
@@ -48,7 +88,6 @@ public:
 			m_mark->next = temp;
 
 			m_mark->previous = temp;
-
 
 			m_size++;
 		}
@@ -82,6 +121,58 @@ public:
 		}
 
 		return s->data;
+	}
+
+
+	void Insert(size_t i, const T & _val)
+	{
+		if (i > m_size)
+		{
+			throw out_of_range("List GetItemAt Out Of Range");
+		}
+		else if (i == 0)
+		{
+			auto temp = new MyStruct();
+
+			temp->data = _val;
+
+			m_mark->previous->previous = temp;
+
+			temp->next = m_mark->previous;
+
+			m_mark->previous = temp;
+
+			m_size++;
+
+			return;
+		}
+		else if (m_size == i)
+		{
+			Add(_val);
+
+			return;
+		}
+		else
+		{
+			auto temp = new MyStruct();
+
+			temp->data = _val;
+
+			auto mid_ptr = GetItemAt(i);
+
+			mid_ptr->previous->next = temp;
+
+			temp->previous = mid_ptr->previous;
+
+			temp->next = mid_ptr;
+
+			mid_ptr->previous = temp;
+
+			m_size++;
+
+			return;
+		}
+
 	}
 
 
