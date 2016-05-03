@@ -44,6 +44,7 @@ static size_t GetNumberLen(long long num)
 }
 
 
+
 #pragma region Random
 //获取随机数
 //type = 1  int;
@@ -336,6 +337,7 @@ size_t GetMatchNumberCount(size_t num)
 
 #pragma region Full Array
 
+#pragma region 遍历 全排列
 
 bool HasAllNum(unsigned int n)
 {
@@ -426,7 +428,7 @@ long Get_1_N_Min(int n)
 }
 
 
-void Show(int n)
+void ShowFullArray(int n)
 {
 
 	long min = Get_1_N_Min(n);
@@ -443,6 +445,61 @@ void Show(int n)
 
 }
 
+#pragma endregion 遍历 全排列
+
+
+// Depth - First - Search  // 考虑当前第N个时的情况，然后递归第N+1
+namespace Depth_First_Search {
+
+	int a[10], box[10], n = 7;
+
+	void dfs(int step)  //step 表示现在站在 那个 盒子面前，准备要放东西进去了，遍历要用到
+	{
+
+		if (step == n + 1)
+		{
+			for (size_t i = 1; i <= n; i++)
+			{
+				cout << (a[i]);
+			}
+
+			cout << endl;
+
+			return;
+		}
+
+
+		for (size_t i = 1; i <= n; i++)
+		{
+			if (box[i] == 0)  //box[i]==0;说明第 i 个盒子没放东西
+			{
+				a[step] = i;
+
+				box[i] = 1;
+
+				dfs(step + 1);
+
+				box[i] = 0;
+
+			}
+
+		}
+		return;
+	}
+
+	void Test_DFS()
+	{
+
+
+
+		dfs(1);
+
+	}
+
+
+}
+
+
 
 #pragma endregion Full Array
 
@@ -454,7 +511,22 @@ void Show(int n)
 
 int main()
 {
-	RequireAdmin(_T("D:\\常用软件\\SPY.exe"));
+	//list<int> m_list = { 1,2,3,4,5,6,7,8,9,1 };
+
+	//m_list.remove(1);
+
+
+	////std::initializer_list<int> _Ilist = { 1,2,4,5,1 };
+
+
+
+	//for each (auto item in m_list)
+	//{
+	//	OUT(item);
+	//}
+
+	Depth_First_Search::Test_DFS();
+
 
 	system("Pause");
 

@@ -20,26 +20,19 @@ public:
 
 	MyList(std::initializer_list<T> _Ilist)
 	{
+		
 
 	}
 
+	MyList(const MyList && _list)
+	{
+
+	}
+
+
 	~MyList()
 	{
-		if (m_mark)
-		{
-			auto s = m_mark->previous;
-
-			while (s != nullptr)
-			{
-				auto _next = s->next;
-
-				delete s;
-
-				s = _next;
-			}
-		}
-
-		if (m_mark) delete m_mark;
+		Clear();
 	}
 
 	void Add(T _i)
@@ -119,6 +112,27 @@ public:
 		m_size--;
 
 		delete s;
+	}
+
+
+	void Clear()
+	{
+		if (m_mark)
+		{
+			auto s = m_mark->previous;
+
+			while (s != nullptr)
+			{
+				auto _next = s->next;
+
+				delete s;
+
+				s = _next;
+			}
+
+			delete m_mark;
+		}
+
 	}
 
 
