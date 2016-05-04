@@ -1,9 +1,46 @@
 #pragma once
 
 
+
+
 template<typename T>
 class MyList
 {
+public:
+
+
+	class Iterator
+	{
+
+	public:
+
+		size_t index = 0;
+
+		MyList<T> & outer;
+
+		Iterator() = default;
+
+		Iterator(MyList<T> & o, int i) : outer(o), index(i) {}
+
+		void operator++()
+		{
+			index++;
+		}
+
+		T operator*() const
+		{
+			return outer.operator[](index);
+		}
+
+		bool operator!=(Iterator i)
+		{
+			return i.index != index;
+		}
+
+	};
+
+
+
 	struct MyStruct
 	{
 		T data;
@@ -251,10 +288,24 @@ public:
 	}
 
 
+	Iterator begin()
+	{
+		Iterator temp(*this, 0);
+		return temp;
+	}
+
+	Iterator end()
+	{
+		Iterator temp(*this, size());
+		return temp;
+	}
+
 private:
 
 	MyStruct *m_mark = nullptr;
 
 	size_t m_size = 0;
+
+
 
 };
