@@ -16,26 +16,63 @@ public:
 
 		size_t index = 0;
 
-		MyList<T> & outer;
+		MyList<T> & parent;
 
 		Iterator() = default;
 
-		Iterator(MyList<T> & o, int i) : outer(o), index(i) {}
+		Iterator(MyList<T> & p, size_t _index) : parent(p), index(_index) {}
 
-		void operator++()
+
+#pragma region 重载运算符
+
+		Iterator  operator++()
 		{
 			index++;
+			return *this;
+		}
+
+		Iterator operator--()
+		{
+			index--;
+			return *this;
+		}
+
+		Iterator  operator++(int)
+		{
+			++index;
+			return *this;
+		}
+
+		Iterator operator--(int)
+		{
+			--index;
+			return *this;
+		}
+
+		Iterator  operator+(int _val)
+		{
+			index += _val;
+			return *this;
+		}
+
+		Iterator  operator-(int _val)
+		{
+			index -= _val;
+			return *this;
 		}
 
 		T operator*() const
 		{
-			return outer.operator[](index);
+			return parent.operator[](index);
 		}
 
 		bool operator!=(Iterator i)
 		{
 			return i.index != index;
 		}
+
+#pragma endregion 重载运算符
+
 
 	};
 
@@ -287,6 +324,18 @@ public:
 		return m_size;
 	}
 
+
+	Iterator begin()
+	{
+		Iterator temp(*this, 0);
+		return temp;
+	}
+
+	Iterator end()
+	{
+		Iterator temp(*this, size());
+		return temp;
+	}
 
 	Iterator begin()
 	{
