@@ -306,7 +306,7 @@ namespace Sort
 
 #pragma region Match Number
 
-
+	//获取火柴摆放的数值 的 根数
 	size_t GetMatchNumberCount(size_t num)
 	{
 		int f[10] = { 6,2,5,5,4,5,6,3,7,6 };
@@ -595,10 +595,16 @@ namespace Depth_First_Search
 
 int main()
 {
+	list<int> m_list = { 1,2,3,4,6 };
+
+	MyList<int> m_mylist = { 7,8,9,10,11 };
 
 
-	Depth_First_Search::FillFlood(5, 7);
+	auto a = new int[10]{ 10, 1,82,33,4,53,60,71,8,9 };
 
+
+ 
+	OutArray(a, 10);
 
 	system("Pause");
 

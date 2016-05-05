@@ -3,6 +3,7 @@
 
 
 
+
 template<typename T>
 class MyList
 {
@@ -77,7 +78,6 @@ public:
 	};
 
 
-
 	struct MyStruct
 	{
 		T data;
@@ -89,6 +89,9 @@ public:
 	};
 
 public:
+
+
+#pragma region 构造函数
 
 	MyList() = default;
 
@@ -105,11 +108,22 @@ public:
 	}
 
 
+	MyList(const MyList<T> &)
+	{
+		Clear();
+
+		for each (auto item in _list)
+		{
+			Add(item);
+		}
+	}
+
+
 	MyList(MyList<T> && _list)
 		:m_mark(_list.m_mark), m_size(_list.m_size)
 	{
 		_list.m_size = 0;
-		_list = _list.m_mark->previous = _list.m_mark->next = nullptr;
+		_list.m_mark->previous = _list.m_mark->next = nullptr;
 	}
 
 
@@ -141,6 +155,8 @@ public:
 			Add(item);
 		}
 	}
+
+#pragma endregion 构造函数
 
 
 	~MyList()
@@ -301,6 +317,16 @@ public:
 	}
 
 
+	void Empty()
+	{
+		return m_size == 0;
+	}
+
+	void Sort()
+	{
+
+	}
+
 	MyStruct* GetItemAt(size_t n)
 	{
 		if (n >= m_size)
@@ -331,23 +357,14 @@ public:
 		return temp;
 	}
 
-	Iterator end()
-	{
-		Iterator temp(*this, size());
-		return temp;
-	}
-
-	Iterator begin()
-	{
-		Iterator temp(*this, 0);
-		return temp;
-	}
 
 	Iterator end()
 	{
 		Iterator temp(*this, size());
 		return temp;
 	}
+
+
 
 private:
 
@@ -358,3 +375,5 @@ private:
 
 
 };
+
+
