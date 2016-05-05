@@ -44,9 +44,8 @@ static size_t GetNumberLen(long long num)
 }
 
 
-
 #pragma region Random
-//ªÒ»°ÀÊª˙ ˝
+//Ëé∑ÂèñÈöèÊú∫Êï∞
 //type = 1  int;
 //type = -1 double;
 
@@ -100,128 +99,131 @@ T* GetRandomArray(size_t len, T _min, T _max)
 #pragma endregion Random
 
 
+namespace Sort
+{
+
 
 #pragma region Bucket_Sort 
-//Õ∞≈≈–Ú   O(m+n)
-//Max value is related to your Memory and Platform!!! 
-//This Must Be Unsigned Integer Array
+	//Ê°∂ÊéíÂ∫è   O(m+n)
+	//Max value is related to your Memory and Platform!!! 
+	//This Must Be Unsigned Integer Array
 
-//1-10      £∫   0.002 ~ 0.005 ms
-//1-100     :    0.18  ~ 0.25  ms
-//1-1000    :    0.02  ~ 0.03  ms
-//1-10000   :    About   0.15  ms
-//1-100000  :    About      2  ms
+	//1-10      Ôºö   0.002 ~ 0.005 ms
+	//1-100     :    0.18  ~ 0.25  ms
+	//1-1000    :    0.02  ~ 0.03  ms
+	//1-10000   :    About   0.15  ms
+	//1-100000  :    About      2  ms
 
 
-//if Lenght ==  10000000  : 65 ms
+	//if Lenght ==  10000000  : 65 ms
 
-const unsigned int Aha_Max(const int *temp, const size_t len, bool ascending = true)
-{
-	int t_max = 0;
-
-	for (size_t i = 0; i < len; i++)
+	const unsigned int Aha_Max(const int *temp, const size_t len, bool ascending = true)
 	{
-		t_max = max(temp[i], t_max);
-	}
+		int t_max = 0;
 
-	return t_max;
-}
-
-
-int* Bucket_Sort(int *temp, const size_t len, bool ascending = true)
-{
-	auto t_Max_len = Aha_Max(temp, len) + 1;
-
-	auto t_Max = new int[t_Max_len];  //This code is very important
-
-	memset(t_Max, 0, t_Max_len * sizeof(decltype(t_Max[0])));
-
-	for (size_t i = 0; i < len; i++)
-	{
-		t_Max[temp[i]]++;
-	}
-
-	if (ascending)
-	{
-		int x = 0;
-
-		for (size_t i = 0; i < t_Max_len; i++)
+		for (size_t i = 0; i < len; i++)
 		{
-			if (t_Max[i] != 0)
+			t_max = max(temp[i], t_max);
+		}
+
+		return t_max;
+	}
+
+
+	int* Bucket_Sort(int *temp, const size_t len, bool ascending = true)
+	{
+		auto t_Max_len = Aha_Max(temp, len) + 1;
+
+		auto t_Max = new int[t_Max_len];  //This code is very important
+
+		memset(t_Max, 0, t_Max_len * sizeof(decltype(t_Max[0])));
+
+		for (size_t i = 0; i < len; i++)
+		{
+			t_Max[temp[i]]++;
+		}
+
+		if (ascending)
+		{
+			int x = 0;
+
+			for (size_t i = 0; i < t_Max_len; i++)
 			{
-				for (size_t j = 0; j < t_Max[i]; j++)
+				if (t_Max[i] != 0)
 				{
-					temp[x] = i;
-					x++;
+					for (size_t j = 0; j < t_Max[i]; j++)
+					{
+						temp[x] = i;
+						x++;
+					}
 				}
 			}
 		}
-	}
-	else
-	{
-		int x = len - 1;
-
-		for (size_t i = 0; i < t_Max_len; i++)
+		else
 		{
-			if (t_Max[i] != 0)
+			int x = len - 1;
+
+			for (size_t i = 0; i < t_Max_len; i++)
 			{
-				for (size_t j = 0; j < t_Max[i]; j++)
+				if (t_Max[i] != 0)
 				{
-					temp[x] = i;
-					x--;
+					for (size_t j = 0; j < t_Max[i]; j++)
+					{
+						temp[x] = i;
+						x--;
+					}
 				}
 			}
 		}
+
+
+		delete[] t_Max;
+
+		return temp;
 	}
-
-
-	delete[] t_Max;
-
-	return temp;
-}
 
 #pragma endregion Bucket_Sort
 
 
 
 #pragma region Bubble_Sort
-//√∞≈›≈≈–Ú  O(pow(N,2))
+	//ÂÜíÊ≥°ÊéíÂ∫è  O(pow(N,2))
 
-//This Can be Signed Integer Array or Double Array
+	//This Can be Signed Integer Array or Double Array
 
-//0-10       About 0.0028    ms
-//0-100      About 0.200     ms
-//0-1000     About 20        ms
-//0-10000    About 2050-2070 ms
+	//0-10       About 0.0028    ms
+	//0-100      About 0.200     ms
+	//0-1000     About 20        ms
+	//0-10000    About 2050-2070 ms
 
-//if Length > 100000 It will be slow incredibly!!!;
+	//if Length > 100000 It will be slow incredibly!!!;
 
-int* Bubble_Sort(int *temp, const size_t len, bool ascending = true)
-{
-	for (size_t i = 0; i < len - 1; i++)
+	int* Bubble_Sort(int *temp, const size_t len, bool ascending = true)
 	{
-		for (size_t j = 1; j < len - i; j++)
+		for (size_t i = 0; i < len - 1; i++)
 		{
-			if (ascending)
+			for (size_t j = 1; j < len - i; j++)
 			{
-				if (temp[j - 1] > temp[j])
+				if (ascending)
 				{
-					swap(temp[j - 1], temp[j]);
+					if (temp[j - 1] > temp[j])
+					{
+						swap(temp[j - 1], temp[j]);
+					}
 				}
-			}
-			else
-			{
-				if (temp[j - 1] < temp[j])
+				else
 				{
-					swap(temp[j - 1], temp[j]);
+					if (temp[j - 1] < temp[j])
+					{
+						swap(temp[j - 1], temp[j]);
+					}
 				}
-			}
 
+			}
 		}
-	}
 
-	return temp;
-}
+		return temp;
+	}
 
 
 #pragma endregion Bubble_Sort
@@ -229,74 +231,74 @@ int* Bubble_Sort(int *temp, const size_t len, bool ascending = true)
 
 
 #pragma region Quick_Sort
-//øÏ≈≈     O(NlogN)
-//This Can be Signed Integer Array or Double Array
+	//Âø´Êéí     O(NlogN)
+	//This Can be Signed Integer Array or Double Array
 
-//0-10       About  0.0015   ms
-//0-100       0.015 - 0.02   ms
-//0-1000        0.2 - 0.3    ms
-//0-10000         3 -   4    ms
-//0-100000     About   40    ms
-//0-1000000    About  460    ms       
+	//0-10       About  0.0015   ms
+	//0-100       0.015 - 0.02   ms
+	//0-1000        0.2 - 0.3    ms
+	//0-10000         3 -   4    ms
+	//0-100000     About   40    ms
+	//0-1000000    About  460    ms       
 
-void Quick_Sort(int* array, int left, int right, bool ascendind = true)
-{
-	int base;
-
-	int i, j;
-
-	if (left > right) return;
-
-	base = array[left];
-
-	i = left;
-	j = right;
-
-	while (i != j)
+	void Quick_Sort(int* array, int left, int right, bool ascendind = true)
 	{
+		int base;
 
-		if (ascendind)
+		int i, j;
+
+		if (left > right) return;
+
+		base = array[left];
+
+		i = left;
+		j = right;
+
+		while (i != j)
 		{
-			while (array[j] >= base && i < j)
+
+			if (ascendind)
 			{
-				j--;
+				while (array[j] >= base && i < j)
+				{
+					j--;
+				}
+
+				while (array[i] <= base && i < j)
+				{
+					i++;
+				}
+			}
+			else
+			{
+				while (array[j] <= base && i < j)
+				{
+					j--;
+				}
+
+				while (array[i] >= base && i < j)
+				{
+					i++;
+				}
 			}
 
-			while (array[i] <= base && i < j)
+
+			if (i < j)
 			{
-				i++;
+				swap(array[i], array[j]);
 			}
 		}
-		else
-		{
-			while (array[j] <= base && i < j)
-			{
-				j--;
-			}
 
-			while (array[i] >= base && i < j)
-			{
-				i++;
-			}
-		}
+		array[left] = array[i];
+
+		array[i] = base;
 
 
-		if (i < j)
-		{
-			swap(array[i], array[j]);
-		}
+		Quick_Sort(array, left, i - 1, ascendind);
+
+		Quick_Sort(array, i + 1, right, ascendind);
+
 	}
-
-	array[left] = array[i];
-
-	array[i] = base;
-
-
-	Quick_Sort(array, left, i - 1, ascendind);
-
-	Quick_Sort(array, i + 1, right, ascendind);
-
-}
 
 #pragma endregion Quick_Sort
 
@@ -305,39 +307,42 @@ void Quick_Sort(int* array, int left, int right, bool ascendind = true)
 #pragma region Match Number
 
 
-size_t GetMatchNumberCount(size_t num)
-{
-	int f[10] = { 6,2,5,5,4,5,6,3,7,6 };
-
-	char str[100];
-
-	sprintf_s(str, "%d", num);
-
-
-
-	size_t t = 0;
-
-	int k = 0;
-
-	while (str[k] != '\0')
+	size_t GetMatchNumberCount(size_t num)
 	{
+		int f[10] = { 6,2,5,5,4,5,6,3,7,6 };
 
-		t += f[map_char_int[str[k]]];
-		k++;
+		char str[100];
+
+		sprintf_s(str, "%d", num);
+
+
+
+		size_t t = 0;
+
+		int k = 0;
+
+		while (str[k] != '\0')
+		{
+
+			t += f[map_char_int[str[k]]];
+			k++;
+		}
+
+		return t;
+
 	}
-
-	return t;
-
-}
 
 
 #pragma endregion Match Number
 
 
+}
 
-#pragma region Full Array
 
-#pragma region ±È¿˙ »´≈≈¡–
+#pragma region Search
+
+
+#pragma region ÈÅçÂéÜ ÂÖ®ÊéíÂàó
 
 bool HasAllNum(unsigned int n)
 {
@@ -445,15 +450,18 @@ void ShowFullArray(int n)
 
 }
 
-#pragma endregion ±È¿˙ »´≈≈¡–
+#pragma endregion ÈÅçÂéÜ ÂÖ®ÊéíÂàó
 
 
-// Depth - First - Search  // øº¬«µ±«∞µ⁄N∏ˆ ±µƒ«Èøˆ£¨»ª∫Ûµ›πÈµ⁄N+1
-namespace Depth_First_Search {
+
+// Depth - First - Search  // ËÄÉËôëÂΩìÂâçÁ¨¨N‰∏™Êó∂ÁöÑÊÉÖÂÜµÔºåÁÑ∂ÂêéÈÄíÂΩíÁ¨¨N+1
+namespace Depth_First_Search
+{
 
 	int a[10], box[10], n = 7;
 
-	void dfs(int step)  //step ±Ì æœ÷‘⁄’æ‘⁄ ƒ«∏ˆ ∫–◊”√Ê«∞£¨◊º±∏“™∑≈∂´Œ˜Ω¯»•¡À£¨±È¿˙“™”√µΩ
+
+	void dfs(int step)  //step Ë°®Á§∫Áé∞Âú®Á´ôÂú® ÈÇ£‰∏™ ÁõíÂ≠êÈù¢ÂâçÔºåÂáÜÂ§áË¶ÅÊîæ‰∏úË•øËøõÂéª‰∫ÜÔºåÈÅçÂéÜË¶ÅÁî®Âà∞
 	{
 
 		if (step == n + 1)
@@ -471,7 +479,7 @@ namespace Depth_First_Search {
 
 		for (size_t i = 1; i <= n; i++)
 		{
-			if (box[i] == 0)  //box[i]==0;Àµ√˜µ⁄ i ∏ˆ∫–◊”√ª∑≈∂´Œ˜
+			if (box[i] == 0)  //box[i]==0;ËØ¥ÊòéÁ¨¨ i ‰∏™ÁõíÂ≠êÊ≤°Êîæ‰∏úË•ø
 			{
 				a[step] = i;
 
@@ -487,21 +495,97 @@ namespace Depth_First_Search {
 		return;
 	}
 
-	void Test_DFS()
+
+	////////////////////////////////////////////////////
+
+
+	int m_map[10][10] = {
+		// 0 1 2 3 4 5 6 7 8 9
+		  {0,0,0,0,0,0,0,0,0,0}, //0
+		  {0,0,0,0,0,0,0,1,0,0}, //1
+		  {0,0,0,0,0,0,0,1,1,0}, //2
+		  {0,0,0,0,0,1,1,1,1,0}, //3
+		  {0,1,1,1,1,1,1,1,0,0}, //4
+		  {0,1,0,0,0,1,1,1,1,0}, //5
+		  {0,1,0,0,0,0,1,1,1,0}, //6
+		  {1,1,0,0,0,0,0,1,0,0}, //7
+		  {1,1,1,0,0,0,0,1,0,0}, //8
+		  {1,1,0,0,0,0,0,0,0,0}, //9
+
+	};
+
+
+
+	int m_mark[10][10] = {
+
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+
+	};
+
+
+
+	int next[4][2] = {
+		{0,1},
+		{1,0},
+		{0,-1},
+		{-1,0}
+	};
+
+
+
+	void FloodFill(int x, int y)
 	{
 
+		for (size_t i = 0; i < 4; i++)
+		{
+			int t_x = x + next[i][0];
+			int t_y = y + next[i][1];
+
+			if (t_x < 0 || t_y < 0 || t_x>9 || t_y>9)
+			{
+				continue;
+			}
+
+			if (m_mark[t_x][t_y] == 0 && m_map[t_x][t_y] > 0)
+			{
+				m_mark[t_x][t_y] = 1;
+
+				FloodFill(t_x, t_y);
+
+				cout << t_x << " , " << t_y << endl;
+
+			}
+
+		}
 
 
-		dfs(1);
 
 	}
 
+
+	void Test_DFS()
+	{
+
+		FloodFill(5, 7);
+
+		//dfs(1);
+
+	}
 
 }
 
 
 
-#pragma endregion Full Array
+#pragma endregion Search
 
 
 
@@ -511,21 +595,9 @@ namespace Depth_First_Search {
 
 int main()
 {
-	//list<int> m_list = { 1,2,3,4,5,6,7,8,9,1 };
-
-	//m_list.remove(1);
 
 
-	////std::initializer_list<int> _Ilist = { 1,2,4,5,1 };
-
-
-
-	//for each (auto item in m_list)
-	//{
-	//	OUT(item);
-	//}
-
-	Depth_First_Search::Test_DFS();
+	Depth_First_Search::FillFlood(5, 7);
 
 
 	system("Pause");
