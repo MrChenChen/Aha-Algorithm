@@ -1,82 +1,12 @@
 #pragma once
 
 
-
-
-
 template<typename T>
 class MyList
 {
 public:
 
-
-	class Iterator
-	{
-
-	public:
-
-		size_t index = 0;
-
-		MyList<T> & parent;
-
-		Iterator() = default;
-
-		Iterator(MyList<T> & p, size_t _index) : parent(p), index(_index) {}
-
-
-#pragma region 重载运算符
-
-		Iterator  operator++()
-		{
-			index++;
-			return *this;
-		}
-
-		Iterator operator--()
-		{
-			index--;
-			return *this;
-		}
-
-		Iterator  operator++(int)
-		{
-			++index;
-			return *this;
-		}
-
-		Iterator operator--(int)
-		{
-			--index;
-			return *this;
-		}
-
-		Iterator  operator+(int _val)
-		{
-			index += _val;
-			return *this;
-		}
-
-		Iterator  operator-(int _val)
-		{
-			index -= _val;
-			return *this;
-		}
-
-		T operator*() const
-		{
-			return parent.operator[](index);
-		}
-
-		bool operator!=(Iterator i)
-		{
-			return i.index != index;
-		}
-
-#pragma endregion 重载运算符
-
-
-	};
-
+	typedef long long __size_t;
 
 	struct MyStruct
 	{
@@ -85,6 +15,145 @@ public:
 		MyStruct *next = nullptr;
 
 		MyStruct *previous = nullptr;
+
+		MyStruct & operator=(T _val)
+		{
+			data = _val;
+
+			return *this;
+		}
+
+		bool operator<(MyStruct & _mystruct)
+		{
+			return data < _mystruct.data;
+		}
+
+		bool operator>(MyStruct & _mystruct)
+		{
+			return data > _mystruct.data;
+		}
+
+		bool operator<=(MyStruct & _mystruct)
+		{
+			return data <= _mystruct.data;
+		}
+
+		bool operator>=(MyStruct & _mystruct)
+		{
+			return data >= _mystruct.data;
+		}
+
+		bool operator==(MyStruct & _mystruct)
+		{
+			return data == _mystruct.data;
+		}
+
+
+	};
+
+
+	class Iterator
+	{
+
+	public:
+
+		MyStruct* m_data;
+
+		__size_t m_index = 0;
+
+		Iterator() = default;
+
+		Iterator(MyStruct* p, __size_t _index) : m_data(p), m_index(_index)
+		{
+		}
+
+
+#pragma region 重载运算符
+
+		Iterator operator++()
+		{
+			m_index++;
+			m_data = m_data->next;
+			return *this;
+		}
+
+		Iterator operator--()
+		{
+			m_index--;
+			m_data = m_data->previous;
+			return *this;
+		}
+
+		Iterator  operator++(int)
+		{
+			m_index++;
+			m_data = m_data->next;
+			return *this;
+		}
+
+		Iterator operator--(int)
+		{
+			m_index--;
+			m_data = m_data->previous;
+			return *this;
+		}
+
+		Iterator operator+(__size_t _val)
+		{
+			for (__size_t i = 0; i < _val; i++)
+			{
+				++(*this);
+			}
+
+			return *this;
+		}
+
+		Iterator operator-(int _val)
+		{
+			for (__size_t i = 0; i < _val; i++)
+			{
+				--(*this);
+			}
+			return *this;
+		}
+
+		T operator*()
+		{
+			return m_data->data;
+		}
+
+		MyStruct* operator->()
+		{
+			return m_data;
+		}
+
+		bool operator!=(Iterator i)
+		{
+			return i.m_index != m_index;
+		}
+
+		bool operator<(Iterator & i)
+		{
+			return m_index < i.m_index;
+		}
+
+		bool operator>(Iterator & i)
+		{
+			return m_index > i.m_index;
+		}
+
+		bool operator<=(Iterator & i)
+		{
+			return m_index <= i.m_index;
+		}
+
+		bool operator>=(Iterator & i)
+		{
+			return m_index >= i.m_index;
+		}
+
+#pragma endregion 重载运算符
+
 
 	};
 
@@ -156,6 +225,7 @@ public:
 		}
 	}
 
+
 #pragma endregion 构造函数
 
 
@@ -201,11 +271,11 @@ public:
 	}
 
 
-	T operator[](unsigned n)
+	T & operator[](__size_t n)
 	{
 		auto s = m_mark->previous;
 
-		for (size_t i = 0; i < n; i++)
+		for (__size_t i = 0; i < n; i++)
 		{
 			s = s->next;
 		}
@@ -214,7 +284,7 @@ public:
 	}
 
 
-	void Insert(size_t i, const T & _val)
+	void Insert(__size_t i, const T & _val)
 	{
 		if (i > m_size)
 		{
@@ -266,7 +336,7 @@ public:
 	}
 
 
-	void RemoveAt(size_t n)
+	void RemoveAt(__size_t n)
 	{
 		auto s = GetItemAt(n);
 
@@ -322,12 +392,67 @@ public:
 		return m_size == 0;
 	}
 
-	void Sort()
+
+	void Sort(Iterator _begin, Iterator _end, bool ascendind = true)
 	{
+		//cout << _begin.m_index << " , " << _end.m_index << endl;
+
+		if (_begin.m_index >= _end.m_index) return;   //Must Be First Row!!!
+
+		auto base = _begin->data;
+
+		auto i = _begin;
+
+		auto j = _end;
+
+		while (i.m_index != j.m_index)
+		{
+
+			if (ascendind)
+			{
+				while (j->data >= base && i.m_index < j.m_index)
+				{
+					j--;
+				}
+
+				while (i->data <= base && i.m_index < j.m_index)
+				{
+					i++;
+				}
+			}
+			else
+			{
+				while (j->data <= base && i.m_index < j.m_index)
+				{
+					j--;
+				}
+
+				while (i->data >= base && i.m_index < j.m_index)
+				{
+					i++;
+				}
+
+			}
+
+			if (i < j)
+			{
+				swap(i->data, j->data);
+			}
+
+		}
+
+
+		swap(i->data, _begin->data);
+
+
+		Sort(_begin, i, ascendind);
+
+		Sort(i + 1, _end, ascendind);
 
 	}
 
-	MyStruct* GetItemAt(size_t n)
+
+	MyStruct & GetItemAt(__size_t n)
 	{
 		if (n >= m_size)
 		{
@@ -336,16 +461,16 @@ public:
 
 		auto s = m_mark->previous;
 
-		for (size_t i = 0; i < n; i++)
+		for (__size_t i = 0; i < n; i++)
 		{
 			s = s->next;
 		}
 
-		return s;
+		return *s;
 	}
 
 
-	size_t size()
+	__size_t size()
 	{
 		return m_size;
 	}
@@ -353,26 +478,21 @@ public:
 
 	Iterator begin()
 	{
-		Iterator temp(*this, 0);
-		return temp;
+		return Iterator(m_mark->previous, 0);
 	}
 
 
 	Iterator end()
 	{
-		Iterator temp(*this, size());
-		return temp;
+		return Iterator(m_mark->next, m_size - 1);
 	}
-
 
 
 private:
 
 	MyStruct *m_mark = nullptr;
 
-	size_t m_size = 0;
-
-
+	__size_t m_size = 0;
 
 };
 

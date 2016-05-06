@@ -591,20 +591,69 @@ namespace Depth_First_Search
 
 
 
-
-
 int main()
 {
-	list<int> m_list = { 1,2,3,4,6 };
+	//初始化
 
-	MyList<int> m_mylist = { 7,8,9,10,11 };
+	size_t length = 1000000;
+
+	OUT("Length : " << length << " Random" << endl);
+
+	MyList<int> m_mylist;
+
+	std::list<int> m_stllist;
+
+	auto a = GetRandomArray<int>(length, 10, 1000);
+
+	for (size_t i = 0; i < length; i++)
+	{
+		m_mylist.Add(a[i]);
+
+		m_stllist.push_back(a[i]);
+	}
+
+	//MyList ========================================
+
+	Stopwatch sw;
+	sw.Start();
+
+	m_mylist.Sort(m_mylist.begin(), m_mylist.end());
+
+	OUT("Mylist: " << sw.Stop() << " ms");
+
+	OUT("Min , Mid , Max: " << m_mylist[0] << " " << m_mylist[(m_mylist.size() - 1) / 2] << " " << m_mylist[m_mylist.size() - 1]);
 
 
-	auto a = new int[10]{ 10, 1,82,33,4,53,60,71,8,9 };
+
+	OUT("-----------------------");
 
 
- 
-	OutArray(a, 10);
+	//StlList ========================================
+
+
+	Stopwatch sw1;
+	sw1.Start();
+
+	m_stllist.sort();
+
+	OUT("stllist: " << sw1.Stop() << " ms");
+
+	int temp = 0;
+
+	cout << "Min , Mid , Max: ";
+
+	for each (auto item in m_stllist)
+	{
+		if (temp == 0 || temp == (m_stllist.size() - 1) / 2 || temp == m_stllist.size() - 1)
+		{
+			cout << item << " ";
+		}
+		temp++;
+	}
+
+
+
+	cout << endl;
 
 	system("Pause");
 
