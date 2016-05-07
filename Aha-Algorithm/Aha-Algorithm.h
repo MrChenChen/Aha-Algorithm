@@ -1,5 +1,5 @@
 #pragma once
-
+#include <functional>
 
 template<typename T>
 class MyList
@@ -7,43 +7,45 @@ class MyList
 public:
 
 	typedef long long __size_t;
+	typedef std::function<bool(T, T)> __Fun_Compare;
 
-	struct MyStruct
+
+	struct _List_Element
 	{
 		T data;
 
-		MyStruct *next = nullptr;
+		_List_Element *next = nullptr;
 
-		MyStruct *previous = nullptr;
+		_List_Element *previous = nullptr;
 
-		MyStruct & operator=(T _val)
+		_List_Element & operator=(T _val)
 		{
 			data = _val;
 
 			return *this;
 		}
 
-		bool operator<(MyStruct & _mystruct)
+		bool operator<(_List_Element & _mystruct)
 		{
 			return data < _mystruct.data;
 		}
 
-		bool operator>(MyStruct & _mystruct)
+		bool operator>(_List_Element & _mystruct)
 		{
 			return data > _mystruct.data;
 		}
 
-		bool operator<=(MyStruct & _mystruct)
+		bool operator<=(_List_Element & _mystruct)
 		{
 			return data <= _mystruct.data;
 		}
 
-		bool operator>=(MyStruct & _mystruct)
+		bool operator>=(_List_Element & _mystruct)
 		{
 			return data >= _mystruct.data;
 		}
 
-		bool operator==(MyStruct & _mystruct)
+		bool operator==(_List_Element & _mystruct)
 		{
 			return data == _mystruct.data;
 		}
@@ -51,19 +53,20 @@ public:
 
 	};
 
+
 	//主要用在排序 和 for each
 	class Iterator
 	{
 
 	public:
 
-		MyStruct* m_data;
+		_List_Element* m_data;
 
 		__size_t m_index = 0;
 
-		Iterator() = default;
 
-		Iterator(MyStruct* p, __size_t _index) : m_data(p), m_index(_index)
+
+		Iterator(_List_Element* p, __size_t _index) : m_data(p), m_index(_index)
 		{
 		}
 
@@ -122,7 +125,7 @@ public:
 			return m_data->data;
 		}
 
-		MyStruct* operator->()
+		_List_Element* operator->()
 		{
 			return m_data;
 		}
@@ -239,9 +242,9 @@ public:
 	{
 		if (m_mark == nullptr)
 		{
-			m_mark = new MyStruct;
+			m_mark = new _List_Element;
 
-			auto temp = new MyStruct;
+			auto temp = new _List_Element;
 
 			temp->data = _i;
 
@@ -254,7 +257,7 @@ public:
 		else if (m_size > 0)
 		{
 
-			auto temp = new MyStruct;
+			auto temp = new _List_Element;
 
 			temp->data = _i;
 
@@ -292,7 +295,7 @@ public:
 		}
 		else if (i == 0)
 		{
-			auto temp = new MyStruct();
+			auto temp = new _List_Element();
 
 			temp->data = _val;
 
@@ -314,7 +317,7 @@ public:
 		}
 		else
 		{
-			auto temp = new MyStruct();
+			auto temp = new _List_Element();
 
 			temp->data = _val;
 
@@ -393,64 +396,7 @@ public:
 	}
 
 
-	void Sort(Iterator _begin, Iterator _end, bool ascendind = true)
-	{
-		//cout << _begin.m_index << " , " << _end.m_index << endl;
-
-		if (_begin.m_index >= _end.m_index) return;   //Must Be First Row!!!
-
-		auto base = _begin->data;
-
-		auto i = _begin;
-
-		auto j = _end;
-
-		while (i.m_index != j.m_index)
-		{
-
-			if (ascendind)
-			{
-				while (j->data >= base && i.m_index < j.m_index)
-				{
-					j--;
-				}
-
-				while (i->data <= base && i.m_index < j.m_index)
-				{
-					i++;
-				}
-			}
-			else
-			{
-				while (j->data <= base && i.m_index < j.m_index)
-				{
-					j--;
-				}
-
-				while (i->data >= base && i.m_index < j.m_index)
-				{
-					i++;
-				}
-
-			}
-
-			if (i < j)
-			{
-				swap(i->data, j->data);
-			}
-
-		}
-
-		swap(i->data, _begin->data);
-
-		Sort(_begin, i, ascendind);
-
-		Sort(i + 1, _end, ascendind);
-
-	}
-
-
-	MyStruct & GetItemAt(__size_t n)
+	_List_Element & GetItemAt(__size_t n)
 	{
 		if (n >= m_size)
 		{
@@ -486,12 +432,141 @@ public:
 	}
 
 
+	void Sort(bool ascendind = true)
+	{
+		m_compare = [&](T _t1, T _t2) {return _t1 <= _t2; };
+		__Sort_Compare(begin(), end(), ascendind);
+	}
+
+
+	void Sort(__Fun_Compare _fun, bool ascendind = true)
+	{
+		m_compare = _fun;
+		__Sort_Compare(begin(), end(), ascendind);
+		m_compare = nullptr;
+	}
+
 private:
 
-	MyStruct *m_mark = nullptr;
+
+	//void __Sort(Iterator _begin, Iterator _end, bool ascendind = true)
+	//{
+
+	//	if (_begin.m_index >= _end.m_index) return;   //Must Be First Row!!!
+
+	//	auto base = _begin->data;
+
+	//	auto i = _begin;
+
+	//	auto j = _end;
+
+	//	while (i.m_index != j.m_index)
+	//	{
+
+	//		if (ascendind)
+	//		{
+	//			while ( j->data <= base && i.m_index < j.m_index)
+	//			{
+	//				j--;
+	//			}
+
+	//			while (i->data <= base && i.m_index < j.m_index)
+	//			{
+	//				i++;
+	//			}
+	//		}
+	//		else
+	//		{
+	//			while (j->data <= base && i.m_index < j.m_index)
+	//			{
+	//				j--;
+	//			}
+
+	//			while (base <= i->data && i.m_index < j.m_index)
+	//			{
+	//				i++;
+	//			}
+
+	//		}
+
+	//		if (i < j)
+	//		{
+	//			swap(i->data, j->data);
+	//		}
+
+	//	}
+
+	//	swap(i->data, _begin->data);
+
+	//	__Sort(_begin, i, ascendind);
+
+	//	__Sort(i + 1, _end, ascendind);
+
+	//}
+
+
+	void __Sort_Compare(Iterator _begin, Iterator _end, bool ascendind = true)
+	{
+
+		if (_begin.m_index >= _end.m_index) return;   //Must Be First Row!!!
+
+		auto base = _begin->data;
+
+		Iterator i = _begin;
+
+		Iterator j = _end;
+
+		while (i.m_index != j.m_index)
+		{
+			if (ascendind)
+			{
+				while (m_compare(base, j->data) && i.m_index < j.m_index)
+				{
+					j--;
+				}
+
+				while (m_compare(i->data, base) && i.m_index < j.m_index)
+				{
+					i++;
+				}
+			}
+			else if (i.m_index < j.m_index)
+			{
+				while (m_compare(j->data, base) && i.m_index < j.m_index)
+				{
+					j--;
+				}
+
+				while (m_compare(base, i->data) && i.m_index < j.m_index)
+				{
+					i++;
+				}
+
+			}
+
+			if (i < j)
+			{
+				swap(i->data, j->data);
+			}
+
+		}
+
+		swap(i->data, _begin->data);
+
+		__Sort_Compare(_begin, i, ascendind);
+
+		__Sort_Compare(i + 1, _end, ascendind);
+
+	}
+
+
+private:
+
+	_List_Element *m_mark = nullptr;
 
 	__size_t m_size = 0;
 
+	__Fun_Compare m_compare = nullptr;
 };
 
 

@@ -337,51 +337,51 @@ namespace Sort
 #pragma endregion Match Number
 
 
-namespace MyList_Sort_Demo {
+	namespace MyList_Sort_Demo {
 
-	long length = 0;
+		long length = 1000;
 
-	void Stllist_Sort(int* _a)
-	{
-		std::list<int> m_stllist;
-
-		for (size_t i = 0; i < length; i++)
+		void Stllist_Sort(int* _a)
 		{
-			m_stllist.push_back(_a[i]);
+			std::list<int> m_stllist;
+
+			for (size_t i = 0; i < length; i++)
+			{
+				m_stllist.push_back(_a[i]);
+			}
+
+			cout << "StlList: ";
+
+			Stopwatch sw;
+			sw.Start();
+
+			m_stllist.sort();
+
+			cout << sw.Stop() << " ms";
+
+			cout << endl;
 		}
 
-		cout << "StlList: ";
-
-		Stopwatch sw;
-		sw.Start();
-
-		m_stllist.sort();
-
-		cout << sw.Stop() << " ms";
-
-		cout << endl;
-	}
-
-	void Mylist_Sort(int *_a)
-	{
-		MyList<int> m_mylist;
-
-		for (size_t i = 0; i < length; i++)
+		void Mylist_Sort(int *_a)
 		{
-			m_mylist.Add(_a[i]);
+			MyList<int> m_mylist;
+
+			for (size_t i = 0; i < length; i++)
+			{
+				m_mylist.Add(_a[i]);
+			}
+
+			Stopwatch sw;
+			sw.Start();
+
+			m_mylist.Sort();
+
+			OUT("MyList: " << sw.Stop() << " ms");
+
+			cout << endl;
 		}
 
-		Stopwatch sw;
-		sw.Start();
-
-		m_mylist.Sort(m_mylist.begin(), m_mylist.end());
-
-		OUT("MyList: " << sw.Stop() << " ms");
-
-		cout << endl;
 	}
-
-}
 
 
 }
@@ -636,12 +636,40 @@ namespace Depth_First_Search
 #pragma endregion Search
 
 
+struct My_Struct
+{
+	int i = 0;
+	char str = 'a';
 
+	My_Struct() = default;
+
+
+	My_Struct(int _i, char _s)
+	{
+		i = _i;
+		str = _s;
+	}
+};
 
 
 int main()
 {
-	
+	MyList<int> m_list;
+
+
+	m_list.Add(10);
+	m_list.Add(11);
+	m_list.Add(2);
+	m_list.Add(15);
+	m_list.Add(1);
+	m_list.Add(20);
+	m_list.Add(7);
+	m_list.Add(30);
+	m_list.Add(40);
+
+
+	m_list.Sort();
+
 
 	system("Pause");
 
