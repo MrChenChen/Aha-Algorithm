@@ -51,7 +51,7 @@ public:
 
 	};
 
-
+	//主要用在排序 和 for each
 	class Iterator
 	{
 
@@ -441,9 +441,7 @@ public:
 
 		}
 
-
 		swap(i->data, _begin->data);
-
 
 		Sort(_begin, i, ascendind);
 

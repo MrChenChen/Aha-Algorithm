@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Aha-Algorithm.h"
 #include <list>
+#include <vector>
 
 using namespace std;
 
@@ -336,6 +337,53 @@ namespace Sort
 #pragma endregion Match Number
 
 
+namespace MyList_Sort_Demo {
+
+	long length = 0;
+
+	void Stllist_Sort(int* _a)
+	{
+		std::list<int> m_stllist;
+
+		for (size_t i = 0; i < length; i++)
+		{
+			m_stllist.push_back(_a[i]);
+		}
+
+		cout << "StlList: ";
+
+		Stopwatch sw;
+		sw.Start();
+
+		m_stllist.sort();
+
+		cout << sw.Stop() << " ms";
+
+		cout << endl;
+	}
+
+	void Mylist_Sort(int *_a)
+	{
+		MyList<int> m_mylist;
+
+		for (size_t i = 0; i < length; i++)
+		{
+			m_mylist.Add(_a[i]);
+		}
+
+		Stopwatch sw;
+		sw.Start();
+
+		m_mylist.Sort(m_mylist.begin(), m_mylist.end());
+
+		OUT("MyList: " << sw.Stop() << " ms");
+
+		cout << endl;
+	}
+
+}
+
+
 }
 
 
@@ -593,67 +641,7 @@ namespace Depth_First_Search
 
 int main()
 {
-	//初始化
-
-	size_t length = 1000000;
-
-	OUT("Length : " << length << " Random" << endl);
-
-	MyList<int> m_mylist;
-
-	std::list<int> m_stllist;
-
-	auto a = GetRandomArray<int>(length, 10, 1000);
-
-	for (size_t i = 0; i < length; i++)
-	{
-		m_mylist.Add(a[i]);
-
-		m_stllist.push_back(a[i]);
-	}
-
-	//MyList ========================================
-
-	Stopwatch sw;
-	sw.Start();
-
-	m_mylist.Sort(m_mylist.begin(), m_mylist.end());
-
-	OUT("Mylist: " << sw.Stop() << " ms");
-
-	OUT("Min , Mid , Max: " << m_mylist[0] << " " << m_mylist[(m_mylist.size() - 1) / 2] << " " << m_mylist[m_mylist.size() - 1]);
-
-
-
-	OUT("-----------------------");
-
-
-	//StlList ========================================
-
-
-	Stopwatch sw1;
-	sw1.Start();
-
-	m_stllist.sort();
-
-	OUT("stllist: " << sw1.Stop() << " ms");
-
-	int temp = 0;
-
-	cout << "Min , Mid , Max: ";
-
-	for each (auto item in m_stllist)
-	{
-		if (temp == 0 || temp == (m_stllist.size() - 1) / 2 || temp == m_stllist.size() - 1)
-		{
-			cout << item << " ";
-		}
-		temp++;
-	}
-
-
-
-	cout << endl;
+	
 
 	system("Pause");
 
