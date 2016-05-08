@@ -1,4 +1,5 @@
 #pragma once
+#include <list>
 #include <functional>
 
 template<typename T>
@@ -6,8 +7,8 @@ class MyList
 {
 public:
 
-	typedef long long __size_t;
-	typedef std::function<bool(T, T)> __Fun_Compare;
+	typedef size_t __size_t;
+	typedef std::function<bool(T, T)> __Fun_Less_Equal;
 
 
 	struct _List_Element
@@ -64,7 +65,7 @@ public:
 
 		__size_t m_index = 0;
 
-
+		Iterator() = default;
 
 		Iterator(_List_Element* p, __size_t _index) : m_data(p), m_index(_index)
 		{
@@ -180,22 +181,59 @@ public:
 	}
 
 
-	MyList(const MyList<T> &)
+	MyList(const MyList<T> & _list)
 	{
 		Clear();
 
-		for each (auto item in _list)
+		auto _size = _list.m_size;
+
+		auto _begin = _list.m_mark->previous;
+
+		for (size_t i = 0; i < _size; i++)
+		{
+			Add(_begin->data);
+			_begin = _begin->next;
+		}
+
+	}
+
+
+	MyList(const std::list<T> & _list)
+	{
+		Clear();
+
+		for each (auto & item in _list)
 		{
 			Add(item);
 		}
 	}
 
 
-	MyList(MyList<T> && _list)
-		:m_mark(_list.m_mark), m_size(_list.m_size)
+	MyList<T> & operator=(const std::list<T> & _list)
 	{
+		Clear();
+
+		for each (auto & item in _list)
+		{
+			Add(item);
+		}
+		return *this;
+	}
+
+
+	MyList(MyList<T> && _list)
+		:m_size(_list.m_size)
+	{
+		Clear();
+		m_mark = new _List_Element();
+		m_mark->data = _list.m_mark->data;
+		m_mark->previous = _list.m_mark->previous;
+		m_mark->next = _list.m_mark->next;
+
 		_list.m_size = 0;
-		_list.m_mark->previous = _list.m_mark->next = nullptr;
+		_list.m_mark->previous = nullptr;
+		_list.m_mark->next = nullptr;
+		_list.m_mark = nullptr;
 	}
 
 
@@ -209,7 +247,8 @@ public:
 
 			m_size = _list.m_size;
 
-
+			_list.m_mark->previous = nullptr;
+			_list.m_mark->next = nullptr;
 			_list.m_mark = nullptr;
 
 		}
@@ -385,6 +424,8 @@ public:
 			}
 
 			delete m_mark;
+
+			m_mark = nullptr;
 		}
 
 	}
@@ -414,7 +455,7 @@ public:
 	}
 
 
-	__size_t size()
+	__size_t size() const noexcept
 	{
 		return m_size;
 	}
@@ -425,85 +466,53 @@ public:
 		return Iterator(m_mark->previous, 0);
 	}
 
+	Iterator last()
+	{
+		return Iterator(m_mark->next, m_size - 1);
+	}
 
 	Iterator end()
 	{
-		return Iterator(m_mark->next, m_size - 1);
+		return Iterator(m_mark->previous, m_size);
 	}
 
 
 	void Sort(bool ascendind = true)
 	{
-		m_compare = [&](T _t1, T _t2) {return _t1 <= _t2; };
-		__Sort_Compare(begin(), end(), ascendind);
+		m_less_equal = [&](T _t1, T _t2) {return _t1 <= _t2; };
+		__Sort_Compare(begin(), Iterator(m_mark->next, m_size - 1), ascendind);
 	}
 
 
-	void Sort(__Fun_Compare _fun, bool ascendind = true)
+	void Sort(__Fun_Less_Equal _fun_less_equal, bool ascendind = true)
 	{
-		m_compare = _fun;
-		__Sort_Compare(begin(), end(), ascendind);
-		m_compare = nullptr;
+		m_less_equal = _fun_less_equal;
+		__Sort_Compare(begin(), Iterator(m_mark->next, m_size - 1), ascendind);
+		m_less_equal = nullptr;
+	}
+
+
+	std::list<T> ToStdList()
+	{
+		if (empty())
+		{
+			return list<T>();
+		}
+
+		list<T> temp;
+
+		auto _begin = m_mark->previous;
+
+		for (size_t i = 0; i < m_size; i++)
+		{
+			temp.push_back(_begin->data);
+			_begin = _begin->next;
+		}
+
+		return temp;
 	}
 
 private:
-
-
-	//void __Sort(Iterator _begin, Iterator _end, bool ascendind = true)
-	//{
-
-	//	if (_begin.m_index >= _end.m_index) return;   //Must Be First Row!!!
-
-	//	auto base = _begin->data;
-
-	//	auto i = _begin;
-
-	//	auto j = _end;
-
-	//	while (i.m_index != j.m_index)
-	//	{
-
-	//		if (ascendind)
-	//		{
-	//			while ( j->data <= base && i.m_index < j.m_index)
-	//			{
-	//				j--;
-	//			}
-
-	//			while (i->data <= base && i.m_index < j.m_index)
-	//			{
-	//				i++;
-	//			}
-	//		}
-	//		else
-	//		{
-	//			while (j->data <= base && i.m_index < j.m_index)
-	//			{
-	//				j--;
-	//			}
-
-	//			while (base <= i->data && i.m_index < j.m_index)
-	//			{
-	//				i++;
-	//			}
-
-	//		}
-
-	//		if (i < j)
-	//		{
-	//			swap(i->data, j->data);
-	//		}
-
-	//	}
-
-	//	swap(i->data, _begin->data);
-
-	//	__Sort(_begin, i, ascendind);
-
-	//	__Sort(i + 1, _end, ascendind);
-
-	//}
-
 
 	void __Sort_Compare(Iterator _begin, Iterator _end, bool ascendind = true)
 	{
@@ -520,24 +529,24 @@ private:
 		{
 			if (ascendind)
 			{
-				while (m_compare(base, j->data) && i.m_index < j.m_index)
+				while (m_less_equal(base, j->data) && i.m_index < j.m_index)
 				{
 					j--;
 				}
 
-				while (m_compare(i->data, base) && i.m_index < j.m_index)
+				while (m_less_equal(i->data, base) && i.m_index < j.m_index)
 				{
 					i++;
 				}
 			}
 			else if (i.m_index < j.m_index)
 			{
-				while (m_compare(j->data, base) && i.m_index < j.m_index)
+				while (m_less_equal(j->data, base) && i.m_index < j.m_index)
 				{
 					j--;
 				}
 
-				while (m_compare(base, i->data) && i.m_index < j.m_index)
+				while (m_less_equal(base, i->data) && i.m_index < j.m_index)
 				{
 					i++;
 				}
@@ -566,7 +575,7 @@ private:
 
 	__size_t m_size = 0;
 
-	__Fun_Compare m_compare = nullptr;
+	__Fun_Less_Equal m_less_equal = nullptr;
 };
 
 

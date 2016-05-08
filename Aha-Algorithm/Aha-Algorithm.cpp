@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Aha-Algorithm.h"
-#include <list>
 #include <vector>
 
 using namespace std;
@@ -502,9 +501,51 @@ void ShowFullArray(int n)
 
 
 
-// Depth - First - Search  // 考虑当前第N个时的情况，然后递归第N+1
-namespace Depth_First_Search
+
+namespace First_Search
 {
+
+	int m_map[10][10] = {
+		// 0 1 2 3 4 5 6 7 8 9
+		  {0,0,0,0,0,0,0,0,0,0}, //0
+		  {0,0,0,0,0,0,0,1,0,0}, //1
+		  {0,0,0,0,0,0,0,1,1,0}, //2
+		  {0,0,0,0,0,1,1,1,1,0}, //3
+		  {0,1,1,1,1,1,1,1,0,0}, //4
+		  {0,1,0,0,0,1,1,1,1,0}, //5
+		  {0,1,0,0,0,0,1,1,1,0}, //6
+		  {1,1,0,0,0,0,0,1,0,0}, //7
+		  {1,1,1,0,0,0,0,1,0,0}, //8
+		  {1,1,0,0,0,0,0,0,0,0}, //9
+
+	};
+
+
+	int m_mark[10][10] = {
+
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0,0,0},
+
+	};
+
+
+	int next[4][2] = {
+		{0,1},
+		{1,0},
+		{0,-1},
+		{-1,0}
+	};
+
+
+	// Depth - First - Search  // 考虑当前第N个时的情况，然后递归第N+1
 
 	int a[10], box[10], n = 7;
 
@@ -544,52 +585,7 @@ namespace Depth_First_Search
 	}
 
 
-	////////////////////////////////////////////////////
-
-
-	int m_map[10][10] = {
-		// 0 1 2 3 4 5 6 7 8 9
-		  {0,0,0,0,0,0,0,0,0,0}, //0
-		  {0,0,0,0,0,0,0,1,0,0}, //1
-		  {0,0,0,0,0,0,0,1,1,0}, //2
-		  {0,0,0,0,0,1,1,1,1,0}, //3
-		  {0,1,1,1,1,1,1,1,0,0}, //4
-		  {0,1,0,0,0,1,1,1,1,0}, //5
-		  {0,1,0,0,0,0,1,1,1,0}, //6
-		  {1,1,0,0,0,0,0,1,0,0}, //7
-		  {1,1,1,0,0,0,0,1,0,0}, //8
-		  {1,1,0,0,0,0,0,0,0,0}, //9
-
-	};
-
-
-
-	int m_mark[10][10] = {
-
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-
-	};
-
-
-
-	int next[4][2] = {
-		{0,1},
-		{1,0},
-		{0,-1},
-		{-1,0}
-	};
-
-
-
+	//深度优先搜索
 	void FloodFill(int x, int y)
 	{
 
@@ -620,14 +616,48 @@ namespace Depth_First_Search
 	}
 
 
-	void Test_DFS()
+	//广度优先搜索
+	void BFS(int x, int y)
 	{
+		POINT que[100] = { 0,0 };
 
-		FloodFill(5, 7);
+		int head = 0;
+		int tail = 1;
 
-		//dfs(1);
 
+		que[head] = { x,y };
+
+		while (head < tail)
+		{
+
+			for (size_t i = 0; i < 4; i++)
+			{
+				int tx = que[head].x + next[i][0];
+				int ty = que[head].y + next[i][1];
+
+				if (tx < 1 || tx>10 || ty < 1 || ty>10) continue;
+
+				if (m_mark[tx][ty] == 0 && m_map[tx][ty] == 1)
+				{
+					//cout << "Mark: " << m_mark[tx][ty] << endl;
+
+					que[tail] = { tx,ty };
+
+					m_mark[tx][ty] = 1;
+
+
+					tail++;
+
+					cout << tx << " , " << ty << endl;
+				}
+
+			}
+
+			head++;
+
+		}
 	}
+
 
 }
 
@@ -636,39 +666,18 @@ namespace Depth_First_Search
 #pragma endregion Search
 
 
-struct My_Struct
-{
-	int i = 0;
-	char str = 'a';
-
-	My_Struct() = default;
-
-
-	My_Struct(int _i, char _s)
-	{
-		i = _i;
-		str = _s;
-	}
-};
 
 
 int main()
 {
-	MyList<int> m_list;
-
-
-	m_list.Add(10);
-	m_list.Add(11);
-	m_list.Add(2);
-	m_list.Add(15);
-	m_list.Add(1);
-	m_list.Add(20);
-	m_list.Add(7);
-	m_list.Add(30);
-	m_list.Add(40);
-
+	MyList<int> m_list = { 3 ,1,2,4,5 };
 
 	m_list.Sort();
+
+	for each (auto item in  m_list)
+	{
+		OUT(item);
+	}
 
 
 	system("Pause");
