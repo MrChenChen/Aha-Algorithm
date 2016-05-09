@@ -5,9 +5,10 @@
 template<typename T>
 class MyList
 {
-public:
+private:
 
 	typedef size_t __size_t;
+
 	typedef std::function<bool(T, T)> __Fun_Less_Equal;
 
 
@@ -56,10 +57,8 @@ public:
 
 
 	//主要用在排序 和 for each
-	class Iterator
+	struct Iterator
 	{
-
-	public:
 
 		_List_Element* m_data;
 
@@ -382,6 +381,7 @@ public:
 		if (i > m_size)
 		{
 			throw out_of_range("List GetItemAt Out Of Range");
+			return;
 		}
 		else if (i == 0)
 		{
@@ -493,6 +493,7 @@ public:
 		if (n >= m_size)
 		{
 			throw out_of_range("List GetItemAt Out Of Range");
+			return;
 		}
 
 		auto s = m_mark->previous;
@@ -701,3 +702,252 @@ private:
 };
 
 
+
+template<typename T>
+class MyVector
+{
+private:
+
+	typedef size_t __size_t;
+
+	struct Iterator
+	{
+		T* m_data = nullptr;
+
+
+
+		Iterator() = default;
+
+		Iterator(T* p, __size_t _index)
+		{
+			m_data = p + _index;
+		}
+
+		Iterator & operator++()
+		{
+			++m_data;
+			return *this;
+		}
+
+		Iterator & operator++(int)
+		{
+			++m_data;
+			return *this;
+		}
+
+		Iterator & operator--()
+		{
+			--m_data;
+			return *this;
+		}
+
+		Iterator & operator--(int)
+		{
+			--m_data;
+			return *this;
+		}
+
+		bool operator!=(const Iterator & _val)
+		{
+			return m_data != _val.m_data;
+		}
+
+		bool operator==(const Iterator & _val)
+		{
+			return m_data == _val.m_data;
+		}
+
+		T & operator*()
+		{
+			return *m_data;
+		}
+
+	};
+
+
+public:
+
+
+#pragma region 构造函数
+
+	MyVector()
+	{
+		auto temp = new T[4];
+
+		m_data = temp;
+
+		m_capacity = 4;
+
+		m_size = 0;
+	}
+
+	MyVector(const std::initializer_list<T> & _list)
+	{
+		Clear();
+
+		auto temp = new T[_list.size() * 2];
+
+		m_data = temp;
+
+		m_capacity = _list.size() * 2;
+
+		for each (auto item in _list)
+		{
+			Add(item);
+		}
+
+	}
+
+	MyVector(const MyVector<T> & _list)
+	{
+		Clear();
+
+		auto temp = new T[_list.size() * 2];
+
+		m_data = temp;
+
+		m_capacity = _list.size() * 2;
+
+		for each (auto item in _list)
+		{
+			Add(item);
+		}
+
+	}
+
+#pragma endregion 构造函数
+
+
+	~MyVector()
+	{
+		if (m_data != nullptr)
+		{
+			delete[] m_data;
+		}
+	}
+
+
+#pragma region 重载运算符
+
+	MyVector & operator=(const std::initializer_list<T> & _list)
+	{
+		Clear();
+
+		auto temp = new T[_list.size() * 2];
+
+		m_data = temp;
+
+		m_capacity = _list.size() * 2;
+
+		for each (auto item in _list)
+		{
+			Add(item);
+		}
+
+	}
+
+
+	T & operator[](__size_t i)
+	{
+		return m_data[i];
+	}
+
+#pragma endregion 重载运算符
+
+
+
+	void Add(const T & _val)
+	{
+		CheckSize();
+
+		m_data[m_size] = _val;
+
+		m_size++;
+
+	}
+
+
+	void Insert(__size_t i, const T & _val)
+	{
+		if (i >= m_size)
+		{
+			throw out_of_range("Out of Range");
+
+			return;
+		}
+
+		CheckSize();
+
+		for (size_t j = m_size; j > i; j--)
+		{
+			m_data[j] = m_data[j - 1];
+		}
+
+		m_data[i] = _val;
+
+		m_size++;
+	}
+
+
+	void Clear()
+	{
+		m_capacity = 0;
+
+		m_size = 0;
+
+		if (m_data != nullptr)
+		{
+			delete[] m_data;
+
+			m_data = nullptr;
+		}
+
+	}
+
+
+	__size_t size()
+	{
+		return m_size;
+	}
+
+	Iterator begin()
+	{
+		return Iterator(m_data, 0);
+	}
+
+	Iterator end()
+	{
+		return Iterator(m_data, m_size);
+	}
+
+private:
+
+	void CheckSize()
+	{
+		if (m_size == m_capacity)
+		{
+			auto temp = new T[m_size * 2];
+
+			for (size_t i = 0; i < m_size; i++)
+			{
+				temp[i] = m_data[i];
+			}
+
+			delete[] m_data;
+
+			m_data = temp;
+
+			m_capacity = m_size * 2;
+		}
+	}
+
+
+private:
+
+	T* m_data = nullptr;
+
+	__size_t m_size = 0;
+
+	__size_t m_capacity = 0;
+
+};

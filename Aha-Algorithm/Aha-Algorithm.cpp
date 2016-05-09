@@ -667,21 +667,20 @@ namespace First_Search
 
 
 
-
 int main()
 {
-	MyList<int> m_list = { 9,3,1,2,5,4 };
-
-	m_list.Reverse();
-
-	m_list.Sort();
 
 
-	for each (auto item in m_list)
+	MyVector<int> m_vector = { 1,2,3,4,5,6 };
+
+	m_vector.Insert(5, 100);
+
+
+
+	for each (auto item in m_vector)
 	{
 		OUT(item);
 	}
-
 
 	system("Pause");
 
