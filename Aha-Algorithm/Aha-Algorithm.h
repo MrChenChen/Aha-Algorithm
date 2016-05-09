@@ -161,6 +161,7 @@ public:
 
 	};
 
+
 public:
 
 
@@ -271,6 +272,69 @@ public:
 #pragma endregion 构造函数
 
 
+#pragma region 重载运算符
+
+	T & operator[](__size_t n)
+	{
+		auto s = m_mark->previous;
+
+		for (__size_t i = 0; i < n; i++)
+		{
+			s = s->next;
+		}
+
+		return s->data;
+	}
+
+
+	MyList & operator+=(std::initializer_list<T> _list)
+	{
+		for each (auto & item in _list)
+		{
+			Add(item);
+		}
+
+		return *this;
+	}
+
+
+	MyList & operator+=(const MyList & _list)
+	{
+
+		auto _size = _list.m_size;
+
+		auto _iterator = _list.m_mark->previous;
+
+		for (size_t i = 0; i < _size; i++)
+		{
+			Add(_iterator->data);
+			_iterator = _iterator->next;
+		}
+
+		m_size += _size;
+
+		return *this;
+	}
+
+
+	MyList & operator+=(MyList && _val)
+	{
+		m_mark->next->next = _val.m_mark->previous;
+		_val.m_mark->previous = m_mark->next;
+		m_mark->next = _val.m_mark->next;
+
+		m_size += _val.m_size;
+
+		_val.m_mark->next = nullptr;
+		_val.m_mark->previous = nullptr;
+		_val.m_mark = nullptr;
+
+		return *this;
+	}
+
+#pragma endregion 重载运算符
+
+
 	~MyList()
 	{
 		Clear();
@@ -310,19 +374,6 @@ public:
 
 		}
 
-	}
-
-
-	T & operator[](__size_t n)
-	{
-		auto s = m_mark->previous;
-
-		for (__size_t i = 0; i < n; i++)
-		{
-			s = s->next;
-		}
-
-		return s->data;
 	}
 
 
@@ -466,14 +517,42 @@ public:
 		return Iterator(m_mark->previous, 0);
 	}
 
+
 	Iterator last()
 	{
 		return Iterator(m_mark->next, m_size - 1);
 	}
 
+
 	Iterator end()
 	{
 		return Iterator(m_mark->previous, m_size);
+	}
+
+
+	int IndexOf(const T & _val)
+	{
+		int i = 0;
+
+		for each (auto item in *this)
+		{
+			if (item == _val) return i;
+
+			i++;
+		}
+
+		return -1;
+	}
+
+
+	bool Contain(const T & _val)
+	{
+		for each (auto item in *this)
+		{
+			if (item == _val) return true;
+		}
+
+		return false;
 	}
 
 
@@ -486,9 +565,36 @@ public:
 
 	void Sort(__Fun_Less_Equal _fun_less_equal, bool ascendind = true)
 	{
+		if (m_size < 2) return;
+
 		m_less_equal = _fun_less_equal;
 		__Sort_Compare(begin(), Iterator(m_mark->next, m_size - 1), ascendind);
 		m_less_equal = nullptr;
+	}
+
+
+	void Reverse()
+	{
+		if (m_size < 2) return;
+
+		auto _begin = begin();
+		auto _last = last();
+
+		size_t _size = m_size / 2;
+
+		for (size_t i = 0; i < _size; i++)
+		{
+			auto temp = _last.m_data->data;
+
+			_last.m_data->data = _begin.m_data->data;
+
+			_begin.m_data->data = temp;
+
+			_begin++;
+
+			_last--;
+		}
+
 	}
 
 
@@ -511,6 +617,24 @@ public:
 
 		return temp;
 	}
+
+
+	T* ToArray()
+	{
+		auto arr = new T[m_size];
+
+		size_t i = 0;
+
+		for each (auto item in *this)
+		{
+			arr[i] = item;
+
+			i++;
+		}
+
+		return arr;
+	}
+
 
 private:
 
@@ -568,14 +692,12 @@ private:
 
 	}
 
-
-private:
-
 	_List_Element *m_mark = nullptr;
 
 	__size_t m_size = 0;
 
 	__Fun_Less_Equal m_less_equal = nullptr;
+
 };
 
 

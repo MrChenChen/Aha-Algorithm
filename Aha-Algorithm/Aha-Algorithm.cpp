@@ -670,11 +670,14 @@ namespace First_Search
 
 int main()
 {
-	MyList<int> m_list = { 3 ,1,2,4,5 };
+	MyList<int> m_list = { 9,3,1,2,5,4 };
+
+	m_list.Reverse();
 
 	m_list.Sort();
 
-	for each (auto item in  m_list)
+
+	for each (auto item in m_list)
 	{
 		OUT(item);
 	}
