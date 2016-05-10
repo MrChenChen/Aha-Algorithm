@@ -666,14 +666,22 @@ namespace First_Search
 #pragma endregion Search
 
 
+struct hahh
+{
+	int i;
+
+	char a;
+};
+
 
 int main()
 {
 
 
-	MyVector<int> m_vector = { 1,2,3,4,5,6 };
+	MyVector<int> m_vector = { 1,2,3,4,5 };
 
-	m_vector.Insert(5, 100);
+
+	OUT(m_vector.Empty());
 
 
 
@@ -681,6 +689,8 @@ int main()
 	{
 		OUT(item);
 	}
+
+
 
 	system("Pause");
 

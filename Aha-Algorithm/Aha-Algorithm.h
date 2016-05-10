@@ -209,16 +209,6 @@ public:
 	}
 
 
-	MyList<T> & operator=(const std::list<T> & _list)
-	{
-		Clear();
-
-		for each (auto & item in _list)
-		{
-			Add(item);
-		}
-		return *this;
-	}
 
 
 	MyList(MyList<T> && _list)
@@ -236,36 +226,6 @@ public:
 		_list.m_mark = nullptr;
 	}
 
-
-	MyList<T> & operator=(MyList<T> && _list) noexcept
-	{
-		if (&_list != this)
-		{
-			Clear();
-
-			m_mark = _list.m_mark;
-
-			m_size = _list.m_size;
-
-			_list.m_mark->previous = nullptr;
-			_list.m_mark->next = nullptr;
-			_list.m_mark = nullptr;
-
-		}
-
-		return *this;
-	}
-
-
-	MyList<T> & operator=(const MyList<T> & _list)
-	{
-		Clear();
-
-		for each (T item in _list)
-		{
-			Add(item);
-		}
-	}
 
 
 #pragma endregion 构造函数
@@ -291,6 +251,52 @@ public:
 		for each (auto & item in _list)
 		{
 			Add(item);
+		}
+
+		return *this;
+	}
+
+
+	MyList<T> & operator=(const std::list<T> & _list)
+	{
+		Clear();
+
+		for each (auto & item in _list)
+		{
+			Add(item);
+		}
+
+		return *this;
+	}
+
+
+	MyList<T> & operator=(const MyList<T> & _list)
+	{
+		Clear();
+
+		for each (T item in _list)
+		{
+			Add(item);
+		}
+
+		return *this;
+	}
+
+
+	MyList<T> & operator=(MyList<T> && _list) noexcept
+	{
+		if (&_list != this)
+		{
+			Clear();
+
+			m_mark = _list.m_mark;
+
+			m_size = _list.m_size;
+
+			_list.m_mark->previous = nullptr;
+			_list.m_mark->next = nullptr;
+			_list.m_mark = nullptr;
+
 		}
 
 		return *this;
@@ -330,6 +336,7 @@ public:
 
 		return *this;
 	}
+
 
 #pragma endregion 重载运算符
 
@@ -431,6 +438,13 @@ public:
 
 	void RemoveAt(__size_t n)
 	{
+		if (n > m_size)
+		{
+			throw out_of_range("Out of Range");
+
+			return;
+		}
+
 		auto s = GetItemAt(n);
 
 		if (s->previous != nullptr && s->next != nullptr)
@@ -482,7 +496,7 @@ public:
 	}
 
 
-	void Empty()
+	bool Empty()
 	{
 		return m_size == 0;
 	}
@@ -513,19 +527,19 @@ public:
 	}
 
 
-	Iterator begin()
+	Iterator begin() const
 	{
 		return Iterator(m_mark->previous, 0);
 	}
 
 
-	Iterator last()
+	Iterator last() const
 	{
 		return Iterator(m_mark->next, m_size - 1);
 	}
 
 
-	Iterator end()
+	Iterator end() const
 	{
 		return Iterator(m_mark->previous, m_size);
 	}
@@ -689,7 +703,7 @@ private:
 
 		__Sort_Compare(_begin, i, ascendind);
 
-		__Sort_Compare(i + 1, _end, ascendind);
+		__Sort_Compare(++i, _end, ascendind);
 
 	}
 
@@ -710,10 +724,12 @@ private:
 
 	typedef size_t __size_t;
 
+	typedef std::function<bool(T, T)> __Fun_Less_Equal;
+
+	//主要用在排序 和 for each
 	struct Iterator
 	{
 		T* m_data = nullptr;
-
 
 
 		Iterator() = default;
@@ -757,13 +773,29 @@ private:
 			return m_data == _val.m_data;
 		}
 
-		T & operator*()
+		T operator*()
 		{
 			return *m_data;
 		}
 
-	};
+		Iterator operator=(const Iterator _val)
+		{
+			m_data = _val.m_data;
+			return *this;
+		}
 
+		bool operator<(const Iterator _val)
+		{
+			return m_data < _val.m_data;
+		}
+
+		Iterator operator=(__size_t i)
+		{
+			m_data += i;
+			return *this;
+		}
+
+	};
 
 public:
 
@@ -772,14 +804,15 @@ public:
 
 	MyVector()
 	{
-		auto temp = new T[4];
-
-		m_data = temp;
+		T* temp = new T[4];
 
 		m_capacity = 4;
 
 		m_size = 0;
+
+		m_data = temp;
 	}
+
 
 	MyVector(const std::initializer_list<T> & _list)
 	{
@@ -798,6 +831,7 @@ public:
 
 	}
 
+
 	MyVector(const MyVector<T> & _list)
 	{
 		Clear();
@@ -815,7 +849,23 @@ public:
 
 	}
 
-#pragma endregion 构造函数
+
+	MyVector(MyVector<T> && _list)
+	{
+		Clear();
+
+		m_size = _list.m_size;
+
+		m_capacity = _list.m_capacity;
+
+		m_data = _list.m_data;
+
+		_list.m_data = nullptr;
+
+		_list.m_size = 0;
+
+		_list.m_capacity = 0;
+	}
 
 
 	~MyVector()
@@ -825,6 +875,9 @@ public:
 			delete[] m_data;
 		}
 	}
+
+
+#pragma endregion 构造函数
 
 
 #pragma region 重载运算符
@@ -847,13 +900,50 @@ public:
 	}
 
 
+	MyVector & operator=(const MyVector & _vector)
+	{
+		Clear();
+
+		m_capacity = _vector.size() * 2;
+
+		auto temp = new T[m_capacity];
+
+		m_data = temp;
+
+		for each (T item in _vector)
+		{
+			Add(item);
+		}
+
+		return *this;
+	}
+
+
+	MyVector & operator=(MyVector<T> && _list)
+	{
+		Clear();
+
+		m_size = _list.m_size;
+
+		m_capacity = _list.m_capacity;
+
+		m_data = _list.m_data;
+
+		_list.m_data = nullptr;
+
+		_list.m_size = 0;
+
+		_list.m_capacity = 0;
+	}
+
+
 	T & operator[](__size_t i)
 	{
 		return m_data[i];
 	}
 
-#pragma endregion 重载运算符
 
+#pragma endregion 重载运算符
 
 
 	void Add(const T & _val)
@@ -889,6 +979,38 @@ public:
 	}
 
 
+	void RemoveAt(__size_t n)
+	{
+		if (n >= m_size)
+		{
+			throw out_of_range("Out of Range");
+
+			return;
+		}
+
+		for (size_t i = n; i < m_size - 1; i++)
+		{
+			m_data[i] = m_data[i + 1];
+		}
+
+		m_size--;
+	}
+
+
+	bool Contain(const T & _val)
+	{
+		for each (auto item in *this)
+		{
+			if (item == _val)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
 	void Clear()
 	{
 		m_capacity = 0;
@@ -905,17 +1027,47 @@ public:
 	}
 
 
-	__size_t size()
+	bool Empty()
+	{
+		return m_size == 0;
+	}
+
+
+	void Sort(bool ascendind = true)
+	{
+		m_less_equal = [&](T _t1, T _t2) {return _t1 <= _t2; };
+
+		__Sort_Compare(begin(), --end(), ascendind);
+
+	}
+
+
+	void Sort(__Fun_Less_Equal _fun_less_equal, bool ascendind = true)
+	{
+		m_less_equal = _fun_less_equal;
+
+		__Sort_Compare(begin(), --end(), ascendind);
+
+		m_less_equal = nullptr;
+	}
+
+
+	__size_t size() const
 	{
 		return m_size;
 	}
 
-	Iterator begin()
+	__size_t capacity() const
+	{
+		return m_capacity;
+	}
+
+	Iterator begin() const
 	{
 		return Iterator(m_data, 0);
 	}
 
-	Iterator end()
+	Iterator end() const
 	{
 		return Iterator(m_data, m_size);
 	}
@@ -941,6 +1093,60 @@ private:
 		}
 	}
 
+	void __Sort_Compare(Iterator _begin, Iterator _end, bool ascendind = true)
+	{
+
+		if (_begin.m_data >= _end.m_data) return;
+
+		T base = *_begin.m_data;
+
+		Iterator i = _begin;
+
+		Iterator j = _end;
+
+		while (i.m_data != j.m_data)
+		{
+			if (ascendind)
+			{
+				while (m_less_equal(base, *j.m_data) && i.m_data < j.m_data)
+				{
+					j--;
+				}
+
+				while (m_less_equal(*i.m_data, base) && i.m_data < j.m_data)
+				{
+					i++;
+				}
+
+			}
+			else if (i.m_data < j.m_data)
+			{
+				while (m_less_equal(*j.m_data, base) && i.m_data < j.m_data)
+				{
+					j--;
+				}
+
+				while (m_less_equal(base, *i.m_data) && i.m_data < j.m_data)
+				{
+					i++;
+				}
+
+			}
+
+			if (i < j)
+			{
+				swap(*i.m_data, *j.m_data);
+			}
+
+		}
+
+		swap(*i.m_data, *_begin.m_data);
+
+		__Sort_Compare(_begin, i, ascendind);
+
+		__Sort_Compare(++i, _end, ascendind);
+
+	}
 
 private:
 
@@ -949,5 +1155,7 @@ private:
 	__size_t m_size = 0;
 
 	__size_t m_capacity = 0;
+
+	__Fun_Less_Equal m_less_equal = nullptr;
 
 };
