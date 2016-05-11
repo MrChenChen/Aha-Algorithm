@@ -545,7 +545,7 @@ public:
 	}
 
 
-	int IndexOf(const T & _val)
+	long IndexOf(const T & _val)
 	{
 		int i = 0;
 
@@ -1008,6 +1008,16 @@ public:
 		}
 
 		return false;
+	}
+
+
+	long IndexOf(const T & _val)
+	{
+		for (size_t i = 0; i < m_size; i++)
+		{
+			if (_val == *(m_data + i)) return i;
+		}
+		return -1;
 	}
 
 

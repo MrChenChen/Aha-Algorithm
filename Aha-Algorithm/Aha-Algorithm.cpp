@@ -666,33 +666,62 @@ namespace First_Search
 #pragma endregion Search
 
 
-struct hahh
-{
-	int i;
 
-	char a;
-};
+namespace Heap {
+
+
+
+}
+
+
+LPWSTR string2Wchar(const std::string & s)
+{
+	int dwLen = strlen(s.c_str()) + 1;
+	int nwLen = MultiByteToWideChar(CP_ACP, 0, s.c_str(), dwLen, NULL, 0);//算出合适的长度
+	LPWSTR lpszPath = new WCHAR[dwLen];
+	MultiByteToWideChar(CP_ACP, 0, s.c_str(), dwLen, lpszPath, nwLen);
+	return lpszPath;
+
+}
 
 
 int main()
 {
 
 
-	MyVector<int> m_vector = { 1,2,3,4,5 };
-
-
-	OUT(m_vector.Empty());
 
 
 
-	for each (auto item in m_vector)
+	auto arr = GetRandomArray(10, 1, 100);
+
+
+	int a[10];
+
+	for (size_t i = 0; i < 10; i++)
 	{
-		OUT(item);
+		a[i] = arr[i];
+		cout << a[i] << " ";
+	}
+
+	for (int i = 0; i < 5; i++)
+	{
+
+		if (i * 2 + 1 < 10 && a[i] > a[i * 2 + 1])
+		{
+			swap(a[i], a[i * 2 + 1]);
+		}
+
+		if (i * 2 + 2 < 10 && a[i] > a[i * 2 + 2])
+		{
+			swap(a[i], a[i * 2 + 2]);
+		}
 	}
 
 
 
-	system("Pause");
+
+
+	std::system("Pause");
 
 	return 0;
 
