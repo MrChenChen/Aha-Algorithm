@@ -706,7 +706,7 @@ namespace Heap {
 
 	}
 
-	void SetFullHeap(int *arr, const size_t size)
+	void SetFullHeap(int *arr, const size_t size, bool ascending = true)
 	{
 
 		for (size_t j = size / 2; j > 0; j--)
@@ -720,34 +720,66 @@ namespace Heap {
 
 				while (i * 2 < size && flag == 0)
 				{
-
-
-					if (arr[i] > arr[i == 0 ? 1 : i * 2 + 1])
+					if (ascending)
 					{
-						t = i * 2 + 1;
+						if (arr[i] > arr[i == 0 ? 1 : i * 2 + 1])
+						{
+							t = (i == 0 ? 1 : i * 2 + 1);
+						}
+						else
+						{
+							t = i;
+						}
+
+						if (i * 2 + 2 < size)
+						{
+
+							if (arr[t] > arr[i * 2 + 2])
+								t = i * 2 + 2;
+						}
+
+						if (t != i)
+						{
+							swap(arr[t], arr[i]);
+
+							i = t; //为了跳出循环，防止卡在while中
+						}
+						else
+						{
+							flag = 1;
+						}
 					}
 					else
 					{
-						t = i;
+						if (arr[i] < arr[i == 0 ? 1 : i * 2 + 1])
+						{
+							t = (i == 0 ? 1 : i * 2 + 1);
+						}
+						else
+						{
+							t = i;
+						}
+
+						if (i * 2 + 2 < size)
+						{
+
+							if (arr[t] < arr[i * 2 + 2])
+								t = i * 2 + 2;
+						}
+
+						if (t != i)
+						{
+							swap(arr[t], arr[i]);
+
+							i = t; //为了跳出循环，防止卡在while中
+						}
+						else
+						{
+							flag = 1;
+						}
 					}
 
-					if (i * 2 + 2 < size)
-					{
 
-						if (arr[t] > arr[i * 2 + 2])
-							t = i * 2 + 2;
-					}
-
-					if (t != i)
-					{
-						swap(arr[t], arr[i]);
-
-						i = t; //为了跳出循环，防止卡在while中
-					}
-					else
-					{
-						flag = 1;
-					}
 
 				}
 			}
@@ -776,7 +808,7 @@ int main()
 	}
 
 
-	Heap::SetFullHeap(arr, 10);
+	Heap::SetFullHeap(arr, 10, false);
 
 	cout << endl;
 
