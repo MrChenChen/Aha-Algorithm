@@ -670,58 +670,125 @@ namespace First_Search
 namespace Heap {
 
 
+	void shiftdown(int *arr, const size_t size, int i)
+	{
+		int t, flag = 0;
+
+		while (i * 2 < size  && flag == 0)
+		{
+			if (arr[i] > arr[i * 2])
+			{
+				t = i * 2;
+			}
+			else
+			{
+				t = i;
+			}
+
+			if (i * 2 + 1 < size)
+			{
+				if (arr[t] > arr[i * 2 + 1])
+					t = i * 2 + 1;
+			}
+
+			if (t != i)
+			{
+				swap(arr[t], arr[i]);
+
+				i = t; //为了跳出循环，防止卡在while中
+			}
+			else
+			{
+				flag = 1;
+			}
+
+		}
+
+	}
+
+	void SetFullHeap(int *arr, const size_t size)
+	{
+
+		for (size_t j = size / 2; j > 0; j--)
+		{
+
+			{
+
+				int t, flag = 0;
+
+				int i = j - 1;
+
+				while (i * 2 < size && flag == 0)
+				{
+
+
+					if (arr[i] > arr[i == 0 ? 1 : i * 2 + 1])
+					{
+						t = i * 2 + 1;
+					}
+					else
+					{
+						t = i;
+					}
+
+					if (i * 2 + 2 < size)
+					{
+
+						if (arr[t] > arr[i * 2 + 2])
+							t = i * 2 + 2;
+					}
+
+					if (t != i)
+					{
+						swap(arr[t], arr[i]);
+
+						i = t; //为了跳出循环，防止卡在while中
+					}
+					else
+					{
+						flag = 1;
+					}
+
+				}
+			}
+
+		}
+
+
+	}
+
 
 }
 
 
-LPWSTR string2Wchar(const std::string & s)
-{
-	int dwLen = strlen(s.c_str()) + 1;
-	int nwLen = MultiByteToWideChar(CP_ACP, 0, s.c_str(), dwLen, NULL, 0);//算出合适的长度
-	LPWSTR lpszPath = new WCHAR[dwLen];
-	MultiByteToWideChar(CP_ACP, 0, s.c_str(), dwLen, lpszPath, nwLen);
-	return lpszPath;
 
-}
 
 
 int main()
 {
 
-
-
-
-
 	auto arr = GetRandomArray(10, 1, 100);
 
 
-	int a[10];
+	for (size_t i = 0; i < 10; i++)
+	{
+		cout << arr[i] << " ";
+	}
+
+
+	Heap::SetFullHeap(arr, 10);
+
+	cout << endl;
 
 	for (size_t i = 0; i < 10; i++)
 	{
-		a[i] = arr[i];
-		cout << a[i] << " ";
-	}
-
-	for (int i = 0; i < 5; i++)
-	{
-
-		if (i * 2 + 1 < 10 && a[i] > a[i * 2 + 1])
-		{
-			swap(a[i], a[i * 2 + 1]);
-		}
-
-		if (i * 2 + 2 < 10 && a[i] > a[i * 2 + 2])
-		{
-			swap(a[i], a[i * 2 + 2]);
-		}
+		cout << arr[i] << " ";
 	}
 
 
 
 
-
-	std::system("Pause");
+	system("Pause");
 
 	return 0;
 
