@@ -300,6 +300,14 @@ namespace Sort
 
 	}
 
+
+	void QuickSort(int* array, size_t size, bool ascendind = true)
+	{
+		Quick_Sort(array, 0, size - 1, ascendind);
+
+	}
+
+
 #pragma endregion Quick_Sort
 
 
@@ -334,6 +342,122 @@ namespace Sort
 
 
 #pragma endregion Match Number
+
+
+
+#pragma region Heap Sort
+
+
+	void shift_heap(int *arr, const size_t size, bool ascending)
+	{
+
+		for (size_t j = size / 2; j > 0; j--)
+		{
+
+			int t, flag = 0;
+
+			int i = j - 1;
+
+			while (i * 2 < size && flag == 0)
+			{
+				if (ascending)
+				{
+					if (arr[i] > arr[i == 0 ? 1 : i * 2 + 1])
+					{
+						t = (i == 0 ? 1 : i * 2 + 1);
+					}
+					else
+					{
+						t = i;
+					}
+
+					if (i * 2 + 2 < size)
+					{
+
+						if (arr[t] > arr[i * 2 + 2])
+							t = i * 2 + 2;
+					}
+
+					if (t != i)
+					{
+						swap(arr[t], arr[i]);
+
+						i = t; //为了跳出循环，防止卡在while中，或者进行下一次检查
+					}
+					else
+					{
+						flag = 1;
+					}
+				}
+				else
+				{
+					if (arr[i] < arr[i == 0 ? 1 : i * 2 + 1])
+					{
+						t = (i == 0 ? 1 : i * 2 + 1);
+					}
+					else
+					{
+						t = i;
+					}
+
+					if (i * 2 + 2 < size)
+					{
+
+						if (arr[t] < arr[i * 2 + 2])
+							t = i * 2 + 2;
+					}
+
+					if (t != i)
+					{
+						swap(arr[t], arr[i]);
+
+						i = t; //为了跳出循环，防止卡在while中，或者进行下一次检查
+					}
+					else
+					{
+						flag = 1;
+					}
+				}
+			}
+		}
+	}
+
+
+	void Sort(int *arr, const size_t size, bool ascending = true)
+	{
+
+		shift_heap(arr, size, !ascending);
+
+		for (size_t i = 1; i < size; i++)
+		{
+			swap(arr[0], arr[size - i]);
+
+			shift_heap(arr, size - i - 1, !ascending);
+
+		}
+
+
+		if (ascending)
+		{
+			if (arr[0] > arr[1])
+				swap(arr[0], arr[1]);
+			if (arr[1] > arr[2])
+				swap(arr[2], arr[1]);
+		}
+		else
+		{
+			if (arr[0] < arr[1])
+				swap(arr[0], arr[1]);
+			if (arr[1] < arr[2])
+				swap(arr[2], arr[1]);
+		}
+
+
+	}
+
+
+#pragma endregion Heap Sort
+
 
 
 	namespace MyList_Sort_Demo {
@@ -667,120 +791,6 @@ namespace First_Search
 
 
 
-namespace Heap {
-
-
-	void shift_heap(int *arr, const size_t size, bool ascending)
-	{
-
-		for (size_t j = size / 2; j > 0; j--)
-		{
-
-			int t, flag = 0;
-
-			int i = j - 1;
-
-			while (i * 2 < size && flag == 0)
-			{
-				if (ascending)
-				{
-					if (arr[i] > arr[i == 0 ? 1 : i * 2 + 1])
-					{
-						t = (i == 0 ? 1 : i * 2 + 1);
-					}
-					else
-					{
-						t = i;
-					}
-
-					if (i * 2 + 2 < size)
-					{
-
-						if (arr[t] > arr[i * 2 + 2])
-							t = i * 2 + 2;
-					}
-
-					if (t != i)
-					{
-						swap(arr[t], arr[i]);
-
-						i = t; //为了跳出循环，防止卡在while中，或者进行下一次检查
-					}
-					else
-					{
-						flag = 1;
-					}
-				}
-				else
-				{
-					if (arr[i] < arr[i == 0 ? 1 : i * 2 + 1])
-					{
-						t = (i == 0 ? 1 : i * 2 + 1);
-					}
-					else
-					{
-						t = i;
-					}
-
-					if (i * 2 + 2 < size)
-					{
-
-						if (arr[t] < arr[i * 2 + 2])
-							t = i * 2 + 2;
-					}
-
-					if (t != i)
-					{
-						swap(arr[t], arr[i]);
-
-						i = t; //为了跳出循环，防止卡在while中，或者进行下一次检查
-					}
-					else
-					{
-						flag = 1;
-					}
-				}
-			}
-		}
-	}
-
-
-	void Sort(int *arr, const size_t size, bool ascending = true)
-	{
-
-		shift_heap(arr, size, !ascending);
-
-		for (size_t i = 1; i < size; i++)
-		{
-			swap(arr[0], arr[size - i]);
-
-			shift_heap(arr, size - i - 1, !ascending);
-
-		}
-
-
-
-		if (ascending)
-		{
-
-			if (arr[0] > arr[1])
-				swap(arr[0], arr[1]);
-			if (arr[1] > arr[2])
-				swap(arr[2], arr[1]);
-		}
-		else
-		{
-			if (arr[0] < arr[1])
-				swap(arr[0], arr[1]);
-			if (arr[1] < arr[2])
-				swap(arr[2], arr[1]);
-		}
-
-
-	}
-
-
-}
 
 
 
@@ -789,23 +799,8 @@ namespace Heap {
 int main()
 {
 
-	auto arr = GetRandomArray(10, 1, 100);
 
 
-	for (size_t i = 0; i < 10; i++)
-	{
-		cout << arr[i] << " ";
-	}
-
-	cout << endl;
-
-	Heap::Sort(arr, 10, false);
-
-
-	for (size_t i = 0; i < 10; i++)
-	{
-		cout << arr[i] << " ";
-	}
 
 
 	system("Pause");
