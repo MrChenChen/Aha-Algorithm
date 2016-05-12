@@ -670,120 +670,110 @@ namespace First_Search
 namespace Heap {
 
 
-	void shiftdown(int *arr, const size_t size, int i)
-	{
-		int t, flag = 0;
-
-		while (i * 2 < size  && flag == 0)
-		{
-			if (arr[i] > arr[i * 2])
-			{
-				t = i * 2;
-			}
-			else
-			{
-				t = i;
-			}
-
-			if (i * 2 + 1 < size)
-			{
-				if (arr[t] > arr[i * 2 + 1])
-					t = i * 2 + 1;
-			}
-
-			if (t != i)
-			{
-				swap(arr[t], arr[i]);
-
-				i = t; //为了跳出循环，防止卡在while中
-			}
-			else
-			{
-				flag = 1;
-			}
-
-		}
-
-	}
-
-	void SetFullHeap(int *arr, const size_t size, bool ascending = true)
+	void shift_heap(int *arr, const size_t size, bool ascending)
 	{
 
 		for (size_t j = size / 2; j > 0; j--)
 		{
 
+			int t, flag = 0;
+
+			int i = j - 1;
+
+			while (i * 2 < size && flag == 0)
 			{
-
-				int t, flag = 0;
-
-				int i = j - 1;
-
-				while (i * 2 < size && flag == 0)
+				if (ascending)
 				{
-					if (ascending)
+					if (arr[i] > arr[i == 0 ? 1 : i * 2 + 1])
 					{
-						if (arr[i] > arr[i == 0 ? 1 : i * 2 + 1])
-						{
-							t = (i == 0 ? 1 : i * 2 + 1);
-						}
-						else
-						{
-							t = i;
-						}
-
-						if (i * 2 + 2 < size)
-						{
-
-							if (arr[t] > arr[i * 2 + 2])
-								t = i * 2 + 2;
-						}
-
-						if (t != i)
-						{
-							swap(arr[t], arr[i]);
-
-							i = t; //为了跳出循环，防止卡在while中
-						}
-						else
-						{
-							flag = 1;
-						}
+						t = (i == 0 ? 1 : i * 2 + 1);
 					}
 					else
 					{
-						if (arr[i] < arr[i == 0 ? 1 : i * 2 + 1])
-						{
-							t = (i == 0 ? 1 : i * 2 + 1);
-						}
-						else
-						{
-							t = i;
-						}
-
-						if (i * 2 + 2 < size)
-						{
-
-							if (arr[t] < arr[i * 2 + 2])
-								t = i * 2 + 2;
-						}
-
-						if (t != i)
-						{
-							swap(arr[t], arr[i]);
-
-							i = t; //为了跳出循环，防止卡在while中
-						}
-						else
-						{
-							flag = 1;
-						}
+						t = i;
 					}
 
+					if (i * 2 + 2 < size)
+					{
 
+						if (arr[t] > arr[i * 2 + 2])
+							t = i * 2 + 2;
+					}
 
+					if (t != i)
+					{
+						swap(arr[t], arr[i]);
+
+						i = t; //为了跳出循环，防止卡在while中，或者进行下一次检查
+					}
+					else
+					{
+						flag = 1;
+					}
+				}
+				else
+				{
+					if (arr[i] < arr[i == 0 ? 1 : i * 2 + 1])
+					{
+						t = (i == 0 ? 1 : i * 2 + 1);
+					}
+					else
+					{
+						t = i;
+					}
+
+					if (i * 2 + 2 < size)
+					{
+
+						if (arr[t] < arr[i * 2 + 2])
+							t = i * 2 + 2;
+					}
+
+					if (t != i)
+					{
+						swap(arr[t], arr[i]);
+
+						i = t; //为了跳出循环，防止卡在while中，或者进行下一次检查
+					}
+					else
+					{
+						flag = 1;
+					}
 				}
 			}
+		}
+	}
 
+
+	void Sort(int *arr, const size_t size, bool ascending = true)
+	{
+
+		shift_heap(arr, size, !ascending);
+
+		for (size_t i = 1; i < size; i++)
+		{
+			swap(arr[0], arr[size - i]);
+
+			shift_heap(arr, size - i - 1, !ascending);
+
+		}
+
+
+
+		if (ascending)
+		{
+
+			if (arr[0] > arr[1])
+				swap(arr[0], arr[1]);
+			if (arr[1] > arr[2])
+				swap(arr[2], arr[1]);
+		}
+		else
+		{
+			if (arr[0] < arr[1])
+				swap(arr[0], arr[1]);
+			if (arr[1] < arr[2])
+				swap(arr[2], arr[1]);
 		}
 
 
@@ -807,17 +797,15 @@ int main()
 		cout << arr[i] << " ";
 	}
 
-
-	Heap::SetFullHeap(arr, 10, false);
-
 	cout << endl;
+
+	Heap::Sort(arr, 10, false);
+
 
 	for (size_t i = 0; i < 10; i++)
 	{
 		cout << arr[i] << " ";
 	}
-
-
 
 
 	system("Pause");

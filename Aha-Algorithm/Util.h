@@ -5,7 +5,7 @@
 namespace Global_Function {
 
 
-	byte* GetFileWithBinary(const std::string & path)
+	std::tuple<byte*, size_t> GetFileWithBinary(const std::string & path)
 	{
 		FILE* file = fopen("D:/g.bmp", "rb");
 
@@ -25,9 +25,9 @@ namespace Global_Function {
 
 		fclose(file);
 
-		return m_byte;
-	}
+		return std::make_tuple(m_byte, len);
 
+	}
 
 
 }
